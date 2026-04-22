@@ -58,6 +58,21 @@ uv run indie-analyst tools    # list discovered tools
 uv run indie-analyst teams    # list swarm teams
 ```
 
+## Documentation map
+
+- **Live docs:** [indiemarket.dharunashokkumar.com](https://indiemarket.dharunashokkumar.com)
+- **Local docs pages:** `docs/index.html`, `docs/quickstart.html`, `docs/architecture.html`
+- **Contributor guide:** [`CONTRIBUTING.md`](./CONTRIBUTING.md)
+- **Architecture deep-dive:** [`CLAUDE.md`](./CLAUDE.md)
+
+To preview the static docs locally:
+
+```bash
+python3 -m http.server 4173 -d docs
+```
+
+Then open `http://localhost:4173`.
+
 ## Architecture
 
 Two independent planes:

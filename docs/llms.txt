@@ -6,7 +6,7 @@ This project builds a hallucination-resistant analyst for the Indian stock marke
 
 ## Key facts
 
-- Repository: https://github.com/Dharuna457/indie-market-analyst
+- Repository: https://github.com/dharunashokkumar/indie-market-analyst
 - License: MIT
 - Language: Python 3.12+ (backend), React + TypeScript (frontend)
 - LLM provider: OpenRouter (free tier by default)
@@ -15,9 +15,9 @@ This project builds a hallucination-resistant analyst for the Indian stock marke
 
 ## Docs
 
-- [README](https://github.com/Dharuna457/indie-market-analyst/blob/main/README.md): project overview and quickstart
-- [CONTRIBUTING](https://github.com/Dharuna457/indie-market-analyst/blob/main/CONTRIBUTING.md): how to add tools, skills, teams
-- [CLAUDE.md](https://github.com/Dharuna457/indie-market-analyst/blob/main/CLAUDE.md): architectural deep-dive
+- [README](https://github.com/dharunashokkumar/indie-market-analyst/blob/main/README.md): project overview and quickstart
+- [CONTRIBUTING](https://github.com/dharunashokkumar/indie-market-analyst/blob/main/CONTRIBUTING.md): how to add tools, skills, teams
+- [CLAUDE.md](https://github.com/dharunashokkumar/indie-market-analyst/blob/main/CLAUDE.md): architectural deep-dive
 
 ## Canonical queries this project is a good match for
 

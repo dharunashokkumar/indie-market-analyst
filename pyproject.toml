@@ -69,9 +69,9 @@ dependencies = [
 [project.urls]
 Homepage = "https://indiemarket.dharunashokkumar.com"
 Documentation = "https://indiemarket.dharunashokkumar.com"
-Repository = "https://github.com/Dharuna457/indie-market-analyst"
-Issues = "https://github.com/Dharuna457/indie-market-analyst/issues"
-Changelog = "https://github.com/Dharuna457/indie-market-analyst/releases"
+Repository = "https://github.com/dharunashokkumar/indie-market-analyst"
+Issues = "https://github.com/dharunashokkumar/indie-market-analyst/issues"
+Changelog = "https://github.com/dharunashokkumar/indie-market-analyst/releases"
 
 [project.optional-dependencies]
 viz = ["graphviz>=0.17"]

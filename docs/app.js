@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </li>
                     `).join('')}
                     <li class="nav-item" style="margin-top: 2rem;">
-                        <a href="https://github.com/Dharuna457/indie-market-analyst" target="_blank" class="nav-link" style="font-style: normal; font-size: 0.9rem; opacity: 0.6;">
+                        <a href="https://github.com/dharunashokkumar/indie-market-analyst" target="_blank" class="nav-link" style="font-style: normal; font-size: 0.9rem; opacity: 0.6;">
                             GitHub ↗
                         </a>
                     </li>

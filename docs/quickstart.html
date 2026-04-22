@@ -35,7 +35,7 @@
                 <span class="section-label">Step 01</span>
                 <h2>Clone & Install</h2>
                 <p style="margin-bottom: 1.5rem; color: var(--text-muted);">We use <a href="https://github.com/astral-sh/uv" target="_blank">uv</a> for lightning-fast Python dependency management.</p>
-                <pre><code>git clone https://github.com/Dharuna457/indie-market-analyst.git
+                <pre><code>git clone https://github.com/dharunashokkumar/indie-market-analyst.git
 cd indie-market-analyst
 uv sync
 cp .env.example .env</code></pre>
@@ -66,6 +66,15 @@ npm run dev</code></pre>
                 <pre><code>uv run indie-analyst chat
 uv run indie-analyst tools    # list discovered tools
 uv run indie-analyst teams    # list swarm teams</code></pre>
+            </section>
+
+            <section class="section">
+                <span class="section-label">Docs</span>
+                <h2>Preview the Static Docs Locally</h2>
+                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Want to review the landing site before publishing? Serve the <code>docs/</code> directory locally.</p>
+                <pre><code>cd ..
+python3 -m http.server 4173 -d docs</code></pre>
+                <p style="margin-top: 2rem;">Then open <a href="http://localhost:4173" target="_blank">http://localhost:4173</a>.</p>
             </section>
 
             <footer style="margin-top: 10rem; border-top: 1px solid var(--border); padding-top: 2rem; color: var(--text-muted); font-size: 0.8rem;">
