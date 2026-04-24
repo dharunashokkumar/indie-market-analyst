@@ -45,6 +45,7 @@ class _NormState:
     last_handoff_to: str | None = None
     last_handoff_at: float = 0.0
     inside_think: bool = False  # across delta boundaries
+    saw_reasoning_delta: bool = False
 
 
 _THINK_OPEN = re.compile(r"<think(?:ing)?>", re.IGNORECASE)
@@ -118,6 +119,7 @@ def _normalize(ev: Any, state: _NormState) -> list[StreamEvent]:
             "response.reasoning_text.delta",
             "response.reasoning_summary_text.delta",
         }:
+            state.saw_reasoning_delta = True
             out.append(StreamEvent("reasoning_delta", delta))
             return out
         return out
@@ -154,6 +156,8 @@ def _normalize(ev: Any, state: _NormState) -> list[StreamEvent]:
             }))
             return out
         if name == "reasoning_item_created":
+            if state.saw_reasoning_delta:
+                return out
             text = _reasoning_text(item)
             if text:
                 out.append(StreamEvent("reasoning_delta", text))

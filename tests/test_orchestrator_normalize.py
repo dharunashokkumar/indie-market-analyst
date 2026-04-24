@@ -39,6 +39,25 @@ def test_reasoning_delta_goes_to_reasoning_delta() -> None:
     evs = _normalize(_raw("response.reasoning_text.delta", "thinking..."), state)
     assert len(evs) == 1
     assert evs[0].kind == "reasoning_delta"
+    assert state.saw_reasoning_delta is True
+
+
+def test_reasoning_item_created_is_suppressed_after_streamed_reasoning() -> None:
+    state = _NormState()
+    streamed = _normalize(_raw("response.reasoning_text.delta", "thinking..."), state)
+    item = _run_item("reasoning_item_created", text="thinking...")
+    created = _normalize(item, state)
+    assert len(streamed) == 1
+    assert streamed[0].kind == "reasoning_delta"
+    assert created == []
+
+
+def test_reasoning_item_created_still_works_without_streamed_reasoning() -> None:
+    state = _NormState()
+    evs = _normalize(_run_item("reasoning_item_created", text="thinking..."), state)
+    assert len(evs) == 1
+    assert evs[0].kind == "reasoning_delta"
+    assert evs[0].data == "thinking..."
 
 
 def test_think_tags_stripped_from_output_delta() -> None:
