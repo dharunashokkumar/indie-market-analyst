@@ -2,19 +2,31 @@
 
 from __future__ import annotations
 
+import csv
+import io
 import json
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
+import yfinance as yf
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 from sse_starlette.sse import EventSourceResponse
 
+from backtest import runner as backtest_runner, scans as scan_engine
+from backtest.loaders.registry import load as load_ohlcv
+from backtest.strategies import STRATEGIES
+from backtest.strategies.summary import aggregate_runs, summarize_run
+
 from .agent.orchestrator import run_turn
+from .data.nse_universe import search as search_nse
+from .data.universes import get_universe, universe_options
 from .memory.store import get_store
+from .tools.market_data.heatmap_tool import _snapshot as heatmap_snapshot
 
 load_dotenv()
 
@@ -72,7 +84,30 @@ def get_messages(session_id: str):
 
 @app.get("/runs")
 def list_runs(session_id: str | None = None, limit: int = 50):
-    return get_store().list_runs(session_id=session_id, limit=limit)
+    """List runs newest-first. Includes a summary row extracted from the blob
+    (symbol / strategy / period / sharpe / max_drawdown) when available, so the
+    dashboards list view doesn't need a second round-trip per row."""
+    store = get_store()
+    rows = store.list_runs(session_id=session_id, limit=limit)
+    out = []
+    for row in rows:
+        summary: dict[str, Any] = {}
+        if row["kind"] == "backtest":
+            full = store.get_run(row["id"])
+            if full and isinstance(full.get("blob"), dict):
+                b = full["blob"]
+                metrics = b.get("metrics") or {}
+                summary = {
+                    "symbol": b.get("symbol"),
+                    "strategy": b.get("strategy"),
+                    "period": b.get("period"),
+                    "start_date": b.get("start_date"),
+                    "end_date": b.get("end_date"),
+                    "sharpe": metrics.get("sharpe"),
+                    "max_drawdown": metrics.get("max_drawdown"),
+                }
+        out.append({**row, "summary": summary})
+    return out
 
 
 @app.get("/runs/{run_id}")
@@ -81,6 +116,327 @@ def get_run(run_id: str):
     if not r:
         raise HTTPException(404, "unknown run")
     return r
+
+
+@app.get("/runs/{run_id}/metrics.json")
+def get_run_metrics(run_id: str):
+    r = get_store().get_run(run_id)
+    if not r:
+        raise HTTPException(404, "unknown run")
+    blob = r.get("blob") or {}
+    metrics = blob.get("metrics") or {}
+    return metrics
+
+
+@app.get("/runs/{run_id}/trades.csv")
+def get_run_trades_csv(run_id: str):
+    r = get_store().get_run(run_id)
+    if not r:
+        raise HTTPException(404, "unknown run")
+    blob = r.get("blob") or {}
+    trades: list[dict[str, Any]] = blob.get("trades") or []
+    buf = io.StringIO()
+    fieldnames = [
+        "entry_date", "exit_date", "side", "entry_price", "exit_price",
+        "qty", "pnl", "cost", "return_pct",
+    ]
+    writer = csv.DictWriter(buf, fieldnames=fieldnames)
+    writer.writeheader()
+    for t in trades:
+        writer.writerow({k: t.get(k) for k in fieldnames})
+    csv_bytes = buf.getvalue().encode("utf-8")
+    return StreamingResponse(
+        iter([csv_bytes]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="trades_{run_id[:8]}.csv"'},
+    )
+
+
+@app.get("/runs/{run_id}/benchmark")
+def get_run_benchmark(run_id: str, benchmark: str = "^NSEI"):
+    """Return the benchmark close series aligned to the run's date range.
+
+    Skips (204) if fewer than 80% of the run's dates have matching benchmark
+    closes.
+    """
+    r = get_store().get_run(run_id)
+    if not r:
+        raise HTTPException(404, "unknown run")
+    blob = r.get("blob") or {}
+    curve = blob.get("equity_curve") or []
+    if not curve:
+        return Response(status_code=204)
+    dates = [pt["date"] for pt in curve]
+    start = blob.get("start_date") or dates[0]
+    end = blob.get("end_date") or dates[-1]
+    try:
+        hist = yf.download(
+            tickers=benchmark, start=start, end=end, interval="1d",
+            progress=False, auto_adjust=False, threads=False,
+        )
+    except Exception:
+        return Response(status_code=204)
+    if hist is None or hist.empty or "Close" not in hist.columns:
+        return Response(status_code=204)
+    closes = hist["Close"].dropna()
+    series = pd.Series(
+        closes.values.ravel() if hasattr(closes, "values") else list(closes),
+        index=[str(idx.date()) for idx in closes.index],
+    )
+    matched = sum(1 for d in dates if d in series.index)
+    if matched / max(len(dates), 1) < 0.8:
+        return Response(status_code=204)
+    base = None
+    for d in dates:
+        if d in series.index:
+            base = float(series[d])
+            break
+    if not base:
+        return Response(status_code=204)
+    points = []
+    for d in dates:
+        if d in series.index:
+            val = float(series[d])
+            points.append({"date": d, "value": val, "normalized": val / base})
+    return {"benchmark": benchmark, "points": points, "start_date": start, "end_date": end}
+
+
+# ---------- Strategy dashboard ----------
+
+
+class StrategyRunRequest(BaseModel):
+    symbol: str
+    strategy: str
+    params: dict[str, float | int] | None = None
+    period: str = "2y"
+    interval: str = "1d"
+    capital: float = 1_00_000.0
+    session_id: str | None = None
+
+
+@app.get("/strategy/symbols")
+def strategy_symbols(q: str = "", limit: int = 25):
+    return search_nse(q, limit=limit)
+
+
+@app.get("/strategy/list")
+def strategy_list():
+    out = []
+    for spec in STRATEGIES.values():
+        out.append({
+            "name": spec.name,
+            "category": spec.category,
+            "label": spec.label,
+            "description": spec.description,
+            "default_params": spec.default_params,
+        })
+    out.sort(key=lambda s: (s["category"], s["name"]))
+    return out
+
+
+@app.get("/strategy/quote/{symbol}")
+def strategy_quote(symbol: str):
+    """Lightweight quote snapshot for the company card. Uses recent yfinance history
+    so we don't pay the cost of Ticker.info."""
+    try:
+        df = load_ohlcv("yfinance", symbol=symbol, period="5d", interval="1d")
+    except Exception as e:
+        raise HTTPException(502, f"data fetch failed: {e}") from e
+    if df is None or df.empty:
+        raise HTTPException(404, f"no quote data for {symbol}")
+    last = df.iloc[-1]
+    prev_close = float(df.iloc[-2]["close"]) if len(df) >= 2 else float(last["close"])
+    last_close = float(last["close"])
+    change_pct = (last_close - prev_close) / prev_close if prev_close else 0.0
+    return {
+        "symbol": symbol,
+        "last_price": last_close,
+        "prev_close": prev_close,
+        "change_pct": change_pct,
+        "day_high": float(last["high"]),
+        "day_low": float(last["low"]),
+        "volume": float(last.get("volume", 0.0)),
+        "as_of": str(df.index[-1].date()) if hasattr(df.index[-1], "date") else str(df.index[-1]),
+        "source": "yfinance",
+    }
+
+
+def _signal_label_and_age(signals) -> tuple[str, int]:
+    if len(signals) == 0:
+        return "FLAT", 0
+    last_sig = float(signals.iloc[-1])
+    label = "LONG" if last_sig > 0 else ("SHORT" if last_sig < 0 else "FLAT")
+    age = 0
+    for i in range(len(signals) - 1, 0, -1):
+        if float(signals.iloc[i]) == float(signals.iloc[i - 1]):
+            age += 1
+        else:
+            break
+    return label, age
+
+
+def _run_one(symbol: str, strategy_name: str, df, *,
+             period: str, interval: str, capital: float,
+             session_id: str, persist: bool = True,
+             param_overrides: dict | None = None) -> dict:
+    spec = STRATEGIES[strategy_name]
+    params = {**spec.default_params, **(param_overrides or {})}
+    signals = spec.fn(df, **params)
+    blob = backtest_runner.run(
+        symbol=symbol, signals=signals,
+        period=period, interval=interval,
+        initial_capital=capital,
+        strategy=strategy_name,
+        session_id=session_id,
+        persist=persist,
+        data=df,
+    )
+    label, age = _signal_label_and_age(signals)
+    last_close = float(df["close"].iloc[-1])
+    summary = summarize_run(blob, label, age, last_close)
+    return {
+        "run": blob,
+        "current_signal": label,
+        "signal_age_bars": age,
+        "last_close": last_close,
+        "engine_summary": summary,
+    }
+
+
+@app.post("/strategy/run")
+def strategy_run(req: StrategyRunRequest):
+    if req.strategy not in STRATEGIES:
+        raise HTTPException(400, f"unknown strategy: {req.strategy}")
+    try:
+        df = load_ohlcv("yfinance", symbol=req.symbol, period=req.period, interval=req.interval)
+    except Exception as e:
+        raise HTTPException(502, f"data fetch failed: {e}") from e
+    if df is None or df.empty:
+        raise HTTPException(404, f"no data for {req.symbol}")
+
+    return _run_one(
+        req.symbol, req.strategy, df,
+        period=req.period, interval=req.interval,
+        capital=req.capital,
+        session_id=req.session_id or "strategy_dashboard",
+        param_overrides=req.params,
+    )
+
+
+class StrategyRunAllRequest(BaseModel):
+    symbol: str
+    period: str = "2y"
+    interval: str = "1d"
+    capital: float = 1_00_000.0
+    session_id: str | None = None
+    persist: bool = False  # batch runs default to NOT persisting (12 rows is noisy)
+
+
+@app.post("/strategy/run_all")
+def strategy_run_all(req: StrategyRunAllRequest):
+    """Run every registered strategy on `symbol` and return per-strategy results
+    plus an aggregate verdict. One yfinance fetch shared across all 12 runs."""
+    try:
+        df = load_ohlcv("yfinance", symbol=req.symbol, period=req.period, interval=req.interval)
+    except Exception as e:
+        raise HTTPException(502, f"data fetch failed: {e}") from e
+    if df is None or df.empty:
+        raise HTTPException(404, f"no data for {req.symbol}")
+
+    per_strategy: list[dict] = []
+    for name, spec in STRATEGIES.items():
+        try:
+            res = _run_one(
+                req.symbol, name, df,
+                period=req.period, interval=req.interval,
+                capital=req.capital,
+                session_id=req.session_id or "strategy_dashboard_batch",
+                persist=req.persist,
+            )
+            metrics = res["run"].get("metrics") or {}
+            per_strategy.append({
+                "name": name,
+                "label": spec.label,
+                "category": spec.category,
+                "current_signal": res["current_signal"],
+                "signal_age_bars": res["signal_age_bars"],
+                "sharpe": metrics.get("sharpe"),
+                "max_drawdown": metrics.get("max_drawdown"),
+                "annualized_return": metrics.get("annualized_return"),
+                "trades": len(res["run"].get("trades") or []),
+                "engine_summary": res["engine_summary"],
+            })
+        except Exception as e:
+            per_strategy.append({
+                "name": name, "label": spec.label, "category": spec.category,
+                "current_signal": "FLAT", "signal_age_bars": 0,
+                "sharpe": None, "max_drawdown": None, "annualized_return": None,
+                "trades": 0, "error": str(e),
+            })
+
+    aggregate = aggregate_runs(per_strategy)
+    return {
+        "symbol": req.symbol,
+        "period": req.period,
+        "last_close": float(df["close"].iloc[-1]),
+        "per_strategy": per_strategy,
+        "aggregate": aggregate,
+    }
+
+
+# ---------- Market scan ----------
+
+
+class StartScanRequest(BaseModel):
+    universe: str = "nifty50"
+    period: str = "1y"
+    interval: str = "1d"
+
+
+@app.get("/strategy/universes")
+def list_universes():
+    return universe_options()
+
+
+@app.post("/strategy/scan")
+def scan_start(req: StartScanRequest):
+    try:
+        items = get_universe(req.universe)
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
+    if not items:
+        raise HTTPException(400, "empty universe")
+    scan_id = scan_engine.start_scan(items, universe_name=req.universe,
+                                     period=req.period, interval=req.interval)
+    return {"scan_id": scan_id, "universe_size": len(items),
+            "universe": req.universe, "started_at": scan_engine.get_scan(scan_id)["started_at"]}
+
+
+@app.get("/strategy/scan")
+def scan_list(limit: int = 30):
+    return scan_engine.list_scans(limit=limit)
+
+
+@app.get("/strategy/scan/{scan_id}")
+def scan_get(scan_id: str, full: bool = False):
+    state = scan_engine.get_scan(scan_id, include_per_strategy=full)
+    if state is None:
+        raise HTTPException(404, "unknown scan")
+    return state
+
+
+@app.post("/strategy/scan/{scan_id}/cancel")
+def scan_cancel(scan_id: str):
+    ok = scan_engine.cancel_scan(scan_id)
+    if not ok:
+        raise HTTPException(404, "scan not running")
+    return {"ok": True, "scan_id": scan_id}
+
+
+@app.get("/indices/heatmap")
+def get_indices_heatmap():
+    snap = heatmap_snapshot()
+    return snap.model_dump(mode="json")
 
 
 @app.get("/artifacts/{path:path}")

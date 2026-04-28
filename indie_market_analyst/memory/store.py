@@ -239,8 +239,15 @@ class MemoryStore:
         return [{"id": r[0], "tag": r[1], "text": r[2], "created_at": r[3]} for r in rows]
 
     # ---- runs ----
-    def save_run(self, session_id: str, kind: str, status: str, blob: dict[str, Any]) -> str:
-        rid = str(uuid.uuid4())
+    def save_run(
+        self,
+        session_id: str,
+        kind: str,
+        status: str,
+        blob: dict[str, Any],
+        run_id: str | None = None,
+    ) -> str:
+        rid = run_id or str(uuid.uuid4())
         with self._conn() as c:
             c.execute(
                 "INSERT INTO runs(id, session_id, created_at, kind, status, blob_json)"
@@ -274,6 +281,24 @@ class MemoryStore:
                 "SELECT id, session_id, kind, status, created_at, blob_json FROM runs WHERE id=?",
                 (run_id,),
             ).fetchone()
+            if not row:
+                rows = c.execute(
+                    "SELECT id, session_id, kind, status, created_at, blob_json FROM runs"
+                ).fetchall()
+                for candidate in rows:
+                    try:
+                        blob = json.loads(candidate[5])
+                    except json.JSONDecodeError:
+                        continue
+                    if blob.get("run_id") == run_id:
+                        return {
+                            "id": candidate[0],
+                            "session_id": candidate[1],
+                            "kind": candidate[2],
+                            "status": candidate[3],
+                            "created_at": candidate[4],
+                            "blob": blob,
+                        }
         if not row:
             return None
         return {

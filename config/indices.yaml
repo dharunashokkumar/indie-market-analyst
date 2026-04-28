@@ -1,0 +1,79 @@
+# Constituent and sectoral-index symbol lists for the dashboards heatmap.
+# Symbols use yfinance Indian suffixes (.NS). Update by PR as the indices
+# rebalance (Nifty50/BankNifty rebalance semi-annually on NSE).
+
+nifty50:
+  - { symbol: RELIANCE.NS, name: Reliance Industries }
+  - { symbol: TCS.NS, name: TCS }
+  - { symbol: HDFCBANK.NS, name: HDFC Bank }
+  - { symbol: BHARTIARTL.NS, name: Bharti Airtel }
+  - { symbol: ICICIBANK.NS, name: ICICI Bank }
+  - { symbol: INFY.NS, name: Infosys }
+  - { symbol: SBIN.NS, name: State Bank of India }
+  - { symbol: HINDUNILVR.NS, name: HUL }
+  - { symbol: ITC.NS, name: ITC }
+  - { symbol: LT.NS, name: L&T }
+  - { symbol: KOTAKBANK.NS, name: Kotak Mahindra Bank }
+  - { symbol: AXISBANK.NS, name: Axis Bank }
+  - { symbol: BAJFINANCE.NS, name: Bajaj Finance }
+  - { symbol: M&M.NS, name: Mahindra & Mahindra }
+  - { symbol: SUNPHARMA.NS, name: Sun Pharma }
+  - { symbol: MARUTI.NS, name: Maruti Suzuki }
+  - { symbol: NTPC.NS, name: NTPC }
+  - { symbol: HCLTECH.NS, name: HCL Technologies }
+  - { symbol: TITAN.NS, name: Titan }
+  - { symbol: ULTRACEMCO.NS, name: UltraTech Cement }
+  - { symbol: POWERGRID.NS, name: Power Grid }
+  - { symbol: ASIANPAINT.NS, name: Asian Paints }
+  - { symbol: ADANIENT.NS, name: Adani Enterprises }
+  - { symbol: ONGC.NS, name: ONGC }
+  - { symbol: WIPRO.NS, name: Wipro }
+  - { symbol: ADANIPORTS.NS, name: Adani Ports }
+  - { symbol: COALINDIA.NS, name: Coal India }
+  - { symbol: BAJAJFINSV.NS, name: Bajaj Finserv }
+  - { symbol: NESTLEIND.NS, name: Nestle India }
+  - { symbol: JSWSTEEL.NS, name: JSW Steel }
+  - { symbol: TATAMOTORS.NS, name: Tata Motors }
+  - { symbol: TATASTEEL.NS, name: Tata Steel }
+  - { symbol: HINDALCO.NS, name: Hindalco }
+  - { symbol: GRASIM.NS, name: Grasim }
+  - { symbol: TECHM.NS, name: Tech Mahindra }
+  - { symbol: BAJAJ-AUTO.NS, name: Bajaj Auto }
+  - { symbol: CIPLA.NS, name: Cipla }
+  - { symbol: DRREDDY.NS, name: Dr Reddys }
+  - { symbol: EICHERMOT.NS, name: Eicher Motors }
+  - { symbol: BRITANNIA.NS, name: Britannia }
+  - { symbol: HEROMOTOCO.NS, name: Hero MotoCorp }
+  - { symbol: INDUSINDBK.NS, name: IndusInd Bank }
+  - { symbol: APOLLOHOSP.NS, name: Apollo Hospitals }
+  - { symbol: TATACONSUM.NS, name: Tata Consumer }
+  - { symbol: BPCL.NS, name: BPCL }
+  - { symbol: SBILIFE.NS, name: SBI Life }
+  - { symbol: HDFCLIFE.NS, name: HDFC Life }
+  - { symbol: SHRIRAMFIN.NS, name: Shriram Finance }
+  - { symbol: DIVISLAB.NS, name: Divis Laboratories }
+  - { symbol: LTIM.NS, name: LTIMindtree }
+
+banknifty:
+  - { symbol: HDFCBANK.NS, name: HDFC Bank }
+  - { symbol: ICICIBANK.NS, name: ICICI Bank }
+  - { symbol: SBIN.NS, name: State Bank of India }
+  - { symbol: KOTAKBANK.NS, name: Kotak Mahindra Bank }
+  - { symbol: AXISBANK.NS, name: Axis Bank }
+  - { symbol: INDUSINDBK.NS, name: IndusInd Bank }
+  - { symbol: BANKBARODA.NS, name: Bank of Baroda }
+  - { symbol: PNB.NS, name: Punjab National Bank }
+  - { symbol: FEDERALBNK.NS, name: Federal Bank }
+  - { symbol: AUBANK.NS, name: AU Small Finance Bank }
+  - { symbol: IDFCFIRSTB.NS, name: IDFC First Bank }
+  - { symbol: CANBK.NS, name: Canara Bank }
+
+sectors:
+  - { symbol: "^CNXIT", name: Nifty IT }
+  - { symbol: "^NSEBANK", name: Nifty Bank }
+  - { symbol: "^CNXAUTO", name: Nifty Auto }
+  - { symbol: "^CNXPHARMA", name: Nifty Pharma }
+  - { symbol: "^CNXFMCG", name: Nifty FMCG }
+  - { symbol: "^CNXMETAL", name: Nifty Metal }
+  - { symbol: "^CNXENERGY", name: Nifty Energy }
+  - { symbol: "^CNXREALTY", name: Nifty Realty }

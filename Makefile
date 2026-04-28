@@ -1,4 +1,4 @@
-.PHONY: install dev api frontend test lint fmt build docker-build docker-run clean
+.PHONY: install dev api frontend test lint fmt build docker-build docker-run clean seed-runs
 
 install:
 	uv sync
@@ -14,6 +14,9 @@ frontend:
 
 test:
 	uv run pytest
+
+seed-runs:
+	uv run python -m indie_market_analyst.scripts.seed_runs
 
 lint:
 	uv run ruff check .

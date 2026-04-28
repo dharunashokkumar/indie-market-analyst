@@ -13,3 +13,4 @@ roles:
   quant_coder: openai/gpt-4o
   macro_analyst: openai/gpt-4o-mini
   guardrail_validator: openai/gpt-4o-mini
+  strategy_explainer: meta-llama/llama-3.3-70b-instruct:free

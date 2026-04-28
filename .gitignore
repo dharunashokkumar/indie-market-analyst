@@ -156,11 +156,12 @@ tmp/
 plans/
 
 # INDIE_MARKET_ANALYST runtime artifacts
-runs/
-sessions/
-data/
-!sessions/.gitkeep
-!runs/.gitkeep
+/runs/*
+/sessions/*
+/data/*
+!/sessions/.gitkeep
+!/runs/.gitkeep
+!/data/nse_equity_list.csv
 
 # Internal planning docs — not for public repo
 toslove.txt
@@ -173,4 +174,3 @@ frontend/.vite/
 
 # Override .env* to keep .env.example tracked
 !.env.example
-

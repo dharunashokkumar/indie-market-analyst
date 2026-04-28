@@ -277,14 +277,14 @@ def _extract_final_text(result: Any, streamed_deltas: list[str]) -> str:
     """Prefer typed Pydantic payloads; fall back to the concatenated delta stream."""
     out = getattr(result, "final_output", None)
     if out is not None:
-        for attr in ("markdown", "message_markdown"):
+        for attr in ("markdown", "message_markdown", "summary_markdown"):
             v = getattr(out, attr, None)
             if isinstance(v, str) and v.strip():
                 return v
         if hasattr(out, "model_dump"):
             try:
                 dump = out.model_dump()
-                for key in ("markdown", "message_markdown"):
+                for key in ("markdown", "message_markdown", "summary_markdown"):
                     if isinstance(dump.get(key), str) and dump[key].strip():
                         return dump[key]
             except Exception:  # noqa: BLE001

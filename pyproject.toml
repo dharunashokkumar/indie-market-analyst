@@ -5,7 +5,7 @@ description = "Open-source, tool-first, swarm-orchestrated AI research analyst f
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
-authors = [{ name = "Dharun Ashok Kumar", email = "dharuna457@gmail.com" }]
+authors = [{ name = "Dharun Ashokkumar", email = "dharuna457@gmail.com" }]
 keywords = [
     "indian-stock-market",
     "nse",

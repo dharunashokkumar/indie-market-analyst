@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Plus, Search } from "lucide-react";
+import { BarChart3, LineChart, MessageSquare, Plus } from "lucide-react";
 import {
   deleteSession,
   listSessions,
@@ -85,6 +85,21 @@ export function Sidebar({
           New
         </button>
       </div>
+
+      <nav className="sidebar-nav">
+        <NavLink to="/chat" className="sidebar-nav-link">
+          <MessageSquare size={14} />
+          Chat
+        </NavLink>
+        <NavLink to="/dashboards" className="sidebar-nav-link">
+          <BarChart3 size={14} />
+          Dashboards
+        </NavLink>
+        <NavLink to="/strategy" className="sidebar-nav-link">
+          <LineChart size={14} />
+          Strategy
+        </NavLink>
+      </nav>
 
       <div className="sidebar-search">
         <input
