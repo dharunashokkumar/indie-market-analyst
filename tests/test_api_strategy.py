@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 
 from backtest import runner as backtest_runner
 from backtest.loaders import registry as loader_registry
+from backtest.loaders.yfinance_loader import _to_yahoo_symbol
 from indie_market_analyst import api_server
 from indie_market_analyst.memory.store import MemoryStore
 
@@ -62,6 +63,51 @@ def test_strategy_symbols_search():
     assert r.status_code == 200
     rows = r.json()
     assert any(row["symbol"] == "RELIANCE" for row in rows)
+    assert all(row["asset_type"] == "equity" for row in rows)
+
+
+def test_strategy_instrument_groups_include_requested_assets():
+    client = TestClient(api_server.app)
+    r = client.get("/strategy/instrument-groups")
+    assert r.status_code == 200
+    ids = {row["id"] for row in r.json()}
+    assert {
+        "equity", "commodity", "mutual_fund", "global_index", "indian_index", "crypto",
+    }.issubset(ids)
+
+
+def test_strategy_symbols_commodity_and_crypto():
+    client = TestClient(api_server.app)
+    commodity = client.get("/strategy/symbols", params={"asset_type": "commodity", "q": "gold"})
+    assert commodity.status_code == 200
+    assert commodity.json()[0]["yahoo_symbol"] == "GC=F"
+
+    crypto = client.get("/strategy/symbols", params={"asset_type": "crypto", "q": "btc"})
+    assert crypto.status_code == 200
+    assert crypto.json()[0]["yahoo_symbol"] == "BTC-USD"
+
+
+def test_strategy_symbols_unknown_asset_type():
+    client = TestClient(api_server.app)
+    r = client.get("/strategy/symbols", params={"asset_type": "unknown"})
+    assert r.status_code == 400
+
+
+def test_yfinance_loader_keeps_native_yahoo_symbols():
+    assert _to_yahoo_symbol("RELIANCE") == "RELIANCE.NS"
+    assert _to_yahoo_symbol("GC=F") == "GC=F"
+    assert _to_yahoo_symbol("BTC-USD") == "BTC-USD"
+    assert _to_yahoo_symbol("^NSEI") == "^NSEI"
+
+
+def test_strategy_usdinr_endpoint(fake_loader_and_store):
+    client = TestClient(api_server.app)
+    r = client.get("/strategy/fx/usdinr")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["pair"] == "USDINR"
+    assert body["rate"] > 0
+    assert body["source"] == "yfinance"
 
 
 def test_strategy_run_sma_crossover(fake_loader_and_store):

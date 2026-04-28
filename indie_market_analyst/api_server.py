@@ -23,7 +23,7 @@ from backtest.strategies import STRATEGIES
 from backtest.strategies.summary import aggregate_runs, summarize_run
 
 from .agent.orchestrator import run_turn
-from .data.nse_universe import search as search_nse
+from .data.instruments import instrument_groups, search_instruments
 from .data.universes import get_universe, universe_options
 from .memory.store import get_store
 from .tools.market_data.heatmap_tool import _snapshot as heatmap_snapshot
@@ -215,8 +215,16 @@ class StrategyRunRequest(BaseModel):
 
 
 @app.get("/strategy/symbols")
-def strategy_symbols(q: str = "", limit: int = 25):
-    return search_nse(q, limit=limit)
+def strategy_symbols(q: str = "", limit: int = 25, asset_type: str = "equity"):
+    try:
+        return search_instruments(asset_type, q=q, limit=limit)
+    except ValueError as e:
+        raise HTTPException(400, str(e)) from e
+
+
+@app.get("/strategy/instrument-groups")
+def strategy_instrument_groups():
+    return instrument_groups()
 
 
 @app.get("/strategy/list")
@@ -256,6 +264,24 @@ def strategy_quote(symbol: str):
         "day_high": float(last["high"]),
         "day_low": float(last["low"]),
         "volume": float(last.get("volume", 0.0)),
+        "as_of": str(df.index[-1].date()) if hasattr(df.index[-1], "date") else str(df.index[-1]),
+        "source": "yfinance",
+    }
+
+
+@app.get("/strategy/fx/usdinr")
+def strategy_usdinr():
+    """Latest USD/INR display conversion rate from yfinance."""
+    try:
+        df = load_ohlcv("yfinance", symbol="INR=X", period="5d", interval="1d")
+    except Exception as e:
+        raise HTTPException(502, f"fx fetch failed: {e}") from e
+    if df is None or df.empty:
+        raise HTTPException(404, "no USD/INR data")
+    last = df.iloc[-1]
+    return {
+        "pair": "USDINR",
+        "rate": float(last["close"]),
         "as_of": str(df.index[-1].date()) if hasattr(df.index[-1], "date") else str(df.index[-1]),
         "source": "yfinance",
     }

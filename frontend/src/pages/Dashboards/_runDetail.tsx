@@ -1,5 +1,7 @@
 import type { BacktestRunBlob, TradeRecord } from "../../lib/api";
 
+export type MoneyCurrency = "INR" | "USD";
+
 export function formatPct(v: number | null | undefined): string {
   if (v === null || v === undefined || !Number.isFinite(v)) return "—";
   return `${(v * 100).toFixed(2)}%`;
@@ -8,12 +10,29 @@ export function formatNum(v: number | null | undefined, digits = 2): string {
   if (v === null || v === undefined || !Number.isFinite(v)) return "—";
   return v.toFixed(digits);
 }
-export function formatINR(v: number | null | undefined): string {
+export function formatMoney(
+  v: number | null | undefined,
+  currency: MoneyCurrency = "INR",
+  multiplier = 1,
+): string {
   if (v === null || v === undefined || !Number.isFinite(v)) return "—";
-  return `₹${v.toFixed(2)}`;
+  const scaled = v * multiplier;
+  const prefix = currency === "USD" ? "$" : "₹";
+  return `${prefix}${scaled.toFixed(2)}`;
+}
+export function formatINR(v: number | null | undefined): string {
+  return formatMoney(v, "INR");
 }
 
-export function CostBreakdownCard({ blob }: { blob: BacktestRunBlob }) {
+export function CostBreakdownCard({
+  blob,
+  currency = "INR",
+  multiplier = 1,
+}: {
+  blob: BacktestRunBlob;
+  currency?: MoneyCurrency;
+  multiplier?: number;
+}) {
   const c = blob.costs;
   const rows: { label: string; value: number }[] = [
     { label: "Brokerage", value: c.brokerage },
@@ -31,12 +50,12 @@ export function CostBreakdownCard({ blob }: { blob: BacktestRunBlob }) {
           {rows.map((r) => (
             <tr key={r.label}>
               <td>{r.label}</td>
-              <td className="num">{formatINR(r.value)}</td>
+              <td className="num">{formatMoney(r.value, currency, multiplier)}</td>
             </tr>
           ))}
           <tr className="cost-total">
             <td>Total</td>
-            <td className="num">{formatINR(c.total)}</td>
+            <td className="num">{formatMoney(c.total, currency, multiplier)}</td>
           </tr>
         </tbody>
       </table>
@@ -70,7 +89,15 @@ export function MetricsBox({ blob }: { blob: BacktestRunBlob }) {
   );
 }
 
-export function TradeLog({ trades }: { trades: TradeRecord[] }) {
+export function TradeLog({
+  trades,
+  currency = "INR",
+  multiplier = 1,
+}: {
+  trades: TradeRecord[];
+  currency?: MoneyCurrency;
+  multiplier?: number;
+}) {
   if (trades.length === 0) {
     return <div className="panel-status">No closed trades in this run.</div>;
   }
@@ -100,11 +127,13 @@ export function TradeLog({ trades }: { trades: TradeRecord[] }) {
               </td>
               <td>{t.entry_date}</td>
               <td>{t.exit_date}</td>
-              <td className="num">{formatNum(t.entry_price)}</td>
-              <td className="num">{formatNum(t.exit_price)}</td>
+              <td className="num">{formatMoney(t.entry_price, currency, multiplier)}</td>
+              <td className="num">{formatMoney(t.exit_price, currency, multiplier)}</td>
               <td className="num">{formatNum(t.qty, 0)}</td>
-              <td className={`num ${t.pnl >= 0 ? "pos" : "neg"}`}>{formatINR(t.pnl)}</td>
-              <td className="num">{formatINR(t.cost)}</td>
+              <td className={`num ${t.pnl >= 0 ? "pos" : "neg"}`}>
+                {formatMoney(t.pnl, currency, multiplier)}
+              </td>
+              <td className="num">{formatMoney(t.cost, currency, multiplier)}</td>
               <td className={`num ${t.return_pct >= 0 ? "pos" : "neg"}`}>
                 {formatPct(t.return_pct)}
               </td>

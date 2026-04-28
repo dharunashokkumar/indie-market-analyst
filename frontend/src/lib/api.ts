@@ -198,6 +198,14 @@ export async function getHeatmap(): Promise<HeatmapSnapshot | null> {
 
 // ---------- Strategy dashboard ----------
 
+export type AssetClassId =
+  | "equity"
+  | "commodity"
+  | "mutual_fund"
+  | "global_index"
+  | "indian_index"
+  | "crypto";
+
 export type NseSymbolRow = {
   symbol: string;
   yahoo_symbol: string;
@@ -205,10 +213,33 @@ export type NseSymbolRow = {
   series: string;
   isin: string;
   listed_on: string;
+  asset_type?: AssetClassId;
+  currency?: string;
+  exchange?: string;
+  source?: string;
 };
 
-export async function searchSymbols(q: string, limit = 25): Promise<NseSymbolRow[]> {
-  const url = `/strategy/symbols?q=${encodeURIComponent(q)}&limit=${limit}`;
+export type InstrumentGroup = {
+  id: AssetClassId;
+  label: string;
+  description: string;
+  source: string;
+  count: number;
+};
+
+export async function listInstrumentGroups(): Promise<InstrumentGroup[]> {
+  const r = await fetch("/strategy/instrument-groups");
+  if (!r.ok) return [];
+  return r.json();
+}
+
+export async function searchSymbols(
+  q: string,
+  limit = 25,
+  assetType: AssetClassId = "equity",
+): Promise<NseSymbolRow[]> {
+  const url = `/strategy/symbols?q=${encodeURIComponent(q)}&limit=${limit}`
+    + `&asset_type=${encodeURIComponent(assetType)}`;
   const r = await fetch(url);
   if (!r.ok) return [];
   return r.json();
@@ -228,6 +259,19 @@ export type Quote = {
 
 export async function getQuote(symbol: string): Promise<Quote | null> {
   const r = await fetch(`/strategy/quote/${encodeURIComponent(symbol)}`);
+  if (!r.ok) return null;
+  return r.json();
+}
+
+export type FxRate = {
+  pair: "USDINR";
+  rate: number;
+  as_of: string;
+  source: string;
+};
+
+export async function getUsdInrRate(): Promise<FxRate | null> {
+  const r = await fetch("/strategy/fx/usdinr");
   if (!r.ok) return null;
   return r.json();
 }

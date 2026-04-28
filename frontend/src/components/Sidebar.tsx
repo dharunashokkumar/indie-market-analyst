@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { BarChart3, LineChart, MessageSquare, Plus } from "lucide-react";
+import { BarChart3, LineChart, MessageSquare, PanelLeftClose, Plus } from "lucide-react";
 import {
   deleteSession,
   listSessions,
@@ -14,9 +14,11 @@ import { ThemeToggle } from "./ThemeToggle";
 export function Sidebar({
   onSelectSession,
   onNewChat,
+  onToggle,
 }: {
   onSelectSession: (id: string) => void;
   onNewChat: () => void;
+  onToggle: () => void;
 }) {
   const sessions = useSession((s) => s.sessions);
   const setSessions = useSession((s) => s.setSessions);
@@ -73,6 +75,18 @@ export function Sidebar({
           <div className="brand-dot" />
           indie-market-analyst
         </div>
+        <button
+          type="button"
+          className="sidebar-toggle-btn"
+          onClick={onToggle}
+          aria-label="Close sidebar"
+          title="Close sidebar"
+        >
+          <PanelLeftClose size={16} />
+        </button>
+      </div>
+
+      <div className="sidebar-actions">
         <button
           type="button"
           className="new-chat-btn"
