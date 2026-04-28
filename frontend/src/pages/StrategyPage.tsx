@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   ArrowLeft,
   Bitcoin,
@@ -132,6 +132,121 @@ const INSTRUMENT_ROUNDEL: Record<string, Roundel> = {
   "NG=F": { bg: "#4A90E2", fg: "#ffffff", letter: "NG" },
 };
 
+type CommodityUnitOption = {
+  id: string;
+  label: string;
+  suffix: string;
+  quoteUnitsPerDisplayUnit: number;
+  custom?: false;
+};
+type CommodityCustomOption = {
+  id: "custom";
+  label: string;
+  suffix: string;
+  quoteUnitsPerDisplayUnit: 1;
+  custom: true;
+};
+type CommodityConversionSpec = {
+  quoteUnit: string;
+  defaultUnitId: string;
+  options: (CommodityUnitOption | CommodityCustomOption)[];
+  custom: {
+    label: string;
+    inputSuffix: string;
+    defaultAmount: number;
+    min: number;
+    step: number;
+    toQuoteUnits: (amount: number) => number;
+    suffix: (amount: number) => string;
+  };
+};
+type CommodityConversion = {
+  spec: CommodityConversionSpec;
+  unitId: string;
+  suffix: string;
+  quoteUnitsPerDisplayUnit: number;
+};
+
+const TROY_OUNCE_GRAMS = 31.1034768;
+const AVOIRDUPOIS_OUNCE_GRAMS = 28.349523125;
+const POUND_GRAMS = 453.59237;
+const BARREL_LITERS = 158.987294928;
+const MMBTU_KWH = 293.07107;
+
+function massCommoditySpec(
+  quoteUnit: string,
+  gramsPerQuoteUnit: number,
+  ounceGrams = TROY_OUNCE_GRAMS,
+): CommodityConversionSpec {
+  return {
+    quoteUnit,
+    defaultUnitId: "gram",
+    options: [
+      { id: "gram", label: "Gram", suffix: "g", quoteUnitsPerDisplayUnit: 1 / gramsPerQuoteUnit },
+      { id: "ounce", label: "Ounce", suffix: "oz", quoteUnitsPerDisplayUnit: ounceGrams / gramsPerQuoteUnit },
+      { id: "kg", label: "Kg", suffix: "kg", quoteUnitsPerDisplayUnit: 1000 / gramsPerQuoteUnit },
+      { id: "native", label: quoteUnit, suffix: quoteUnit, quoteUnitsPerDisplayUnit: 1 },
+      { id: "custom", label: "Custom", suffix: "custom", quoteUnitsPerDisplayUnit: 1, custom: true },
+    ],
+    custom: {
+      label: "Custom amount",
+      inputSuffix: "g",
+      defaultAmount: 10,
+      min: 0.01,
+      step: 0.01,
+      toQuoteUnits: (amount) => amount / gramsPerQuoteUnit,
+      suffix: (amount) => `${formatCompactAmount(amount)}g`,
+    },
+  };
+}
+
+const CRUDE_UNIT_OPTIONS: CommodityConversionSpec["options"] = [
+  { id: "liter", label: "Liter", suffix: "L", quoteUnitsPerDisplayUnit: 1 / BARREL_LITERS },
+  { id: "gallon", label: "Gallon", suffix: "gal", quoteUnitsPerDisplayUnit: 1 / 42 },
+  { id: "barrel", label: "Barrel", suffix: "bbl", quoteUnitsPerDisplayUnit: 1 },
+  { id: "custom", label: "Custom", suffix: "custom", quoteUnitsPerDisplayUnit: 1, custom: true },
+];
+const GAS_UNIT_OPTIONS: CommodityConversionSpec["options"] = [
+  { id: "mmbtu", label: "MMBtu", suffix: "MMBtu", quoteUnitsPerDisplayUnit: 1 },
+  { id: "therm", label: "Therm", suffix: "therm", quoteUnitsPerDisplayUnit: 0.1 },
+  { id: "kwh", label: "kWh", suffix: "kWh", quoteUnitsPerDisplayUnit: 1 / MMBTU_KWH },
+  { id: "custom", label: "Custom", suffix: "custom", quoteUnitsPerDisplayUnit: 1, custom: true },
+];
+
+const COMMODITY_CONVERSIONS: Record<string, CommodityConversionSpec> = {
+  "GC=F": massCommoditySpec("troy oz", TROY_OUNCE_GRAMS),
+  "SI=F": massCommoditySpec("troy oz", TROY_OUNCE_GRAMS),
+  "HG=F": massCommoditySpec("lb", POUND_GRAMS, AVOIRDUPOIS_OUNCE_GRAMS),
+  "CL=F": {
+    quoteUnit: "barrel",
+    defaultUnitId: "liter",
+    options: CRUDE_UNIT_OPTIONS,
+    custom: {
+      label: "Custom volume",
+      inputSuffix: "L",
+      defaultAmount: 1,
+      min: 0.01,
+      step: 0.01,
+      toQuoteUnits: (amount) => amount / BARREL_LITERS,
+      suffix: (amount) => `${formatCompactAmount(amount)}L`,
+    },
+  },
+  "NG=F": {
+    quoteUnit: "MMBtu",
+    defaultUnitId: "mmbtu",
+    options: GAS_UNIT_OPTIONS,
+    custom: {
+      label: "Custom energy",
+      inputSuffix: "kWh",
+      defaultAmount: 1,
+      min: 0.01,
+      step: 0.01,
+      toQuoteUnits: (amount) => amount / MMBTU_KWH,
+      suffix: (amount) => `${formatCompactAmount(amount)}kWh`,
+    },
+  },
+};
+
 function RoundelLogo({ spec, size }: { spec: Roundel; size: number }) {
   const fontSize = Math.round(size * (spec.letter.length === 1 ? 0.5 : 0.36));
   return (
@@ -143,6 +258,10 @@ function RoundelLogo({ spec, size }: { spec: Roundel; size: number }) {
       {spec.letter}
     </div>
   );
+}
+
+function formatCompactAmount(value: number) {
+  return Number.isInteger(value) ? value.toFixed(0) : value.toFixed(2).replace(/\.?0+$/, "");
 }
 
 function defaultCurrencyForAsset(assetType: AssetClassId | null): MoneyCurrency {
@@ -179,7 +298,52 @@ function formatPrice(
 ) {
   const prefix = displayCurrency === "INR" ? "₹" : "$";
   const multiplier = currencyMultiplier(nativeCurrency, displayCurrency, usdInrRate);
-  return `${prefix}${formatNum(value * multiplier)}`;
+  const scaled = value * multiplier;
+  const digits = Math.abs(scaled) > 0 && Math.abs(scaled) < 1 ? 4 : 2;
+  return `${prefix}${formatNum(scaled, digits)}`;
+}
+
+function commoditySpecForInstrument(instrument: NseSymbolRow | null) {
+  if (instrument?.asset_type !== "commodity") return null;
+  return COMMODITY_CONVERSIONS[instrument.yahoo_symbol] ?? null;
+}
+
+function resolveCommodityConversion(
+  spec: CommodityConversionSpec | null,
+  unitId: string,
+  customAmount: number,
+): CommodityConversion | null {
+  if (!spec) return null;
+  const fallback = spec.options.find((option) => option.id === spec.defaultUnitId) ?? spec.options[0];
+  const option = spec.options.find((candidate) => candidate.id === unitId) ?? fallback;
+  if (option.custom) {
+    const amount = Number.isFinite(customAmount) && customAmount >= spec.custom.min
+      ? customAmount
+      : spec.custom.defaultAmount;
+    return {
+      spec,
+      unitId: option.id,
+      suffix: spec.custom.suffix(amount),
+      quoteUnitsPerDisplayUnit: spec.custom.toQuoteUnits(amount),
+    };
+  }
+  return {
+    spec,
+    unitId: option.id,
+    suffix: option.suffix,
+    quoteUnitsPerDisplayUnit: option.quoteUnitsPerDisplayUnit,
+  };
+}
+
+function formatUnitPrice(
+  value: number,
+  displayCurrency: MoneyCurrency,
+  nativeCurrency: MoneyCurrency,
+  usdInrRate: number | null,
+  conversion: CommodityConversion | null,
+) {
+  const converted = conversion ? value * conversion.quoteUnitsPerDisplayUnit : value;
+  return formatPrice(converted, displayCurrency, nativeCurrency, usdInrRate);
 }
 
 function CurrencyToggle({
@@ -209,6 +373,48 @@ function CurrencyToggle({
       <span className="currency-rate">
         {usdInrRate ? `USD/INR ${usdInrRate.toFixed(2)}` : "FX loading"}
       </span>
+    </div>
+  );
+}
+
+function CommodityUnitControl({
+  spec,
+  value,
+  customAmount,
+  onChange,
+  onCustomAmountChange,
+}: {
+  spec: CommodityConversionSpec;
+  value: string;
+  customAmount: number;
+  onChange: (unit: string) => void;
+  onCustomAmountChange: (amount: number) => void;
+}) {
+  return (
+    <div className="commodity-unit-control">
+      <label>
+        Unit
+        <select value={value} onChange={(e) => onChange(e.target.value)}>
+          {spec.options.map((option) => (
+            <option key={option.id} value={option.id}>{option.label}</option>
+          ))}
+        </select>
+      </label>
+      {value === "custom" && (
+        <label>
+          {spec.custom.label}
+          <div className="commodity-custom-input">
+            <input
+              type="number"
+              min={spec.custom.min}
+              step={spec.custom.step}
+              value={customAmount}
+              onChange={(e) => onCustomAmountChange(Number(e.target.value) || spec.custom.defaultAmount)}
+            />
+            <span>{spec.custom.inputSuffix}</span>
+          </div>
+        </label>
+      )}
     </div>
   );
 }
@@ -347,11 +553,15 @@ function InstrumentCard({
   quote,
   displayCurrency,
   usdInrRate,
+  commodityConversion,
+  commodityUnitControl,
 }: {
   symbol: NseSymbolRow;
   quote: Quote | null;
   displayCurrency: MoneyCurrency;
   usdInrRate: number | null;
+  commodityConversion: CommodityConversion | null;
+  commodityUnitControl: ReactNode;
 }) {
   const nativeCurrency = nativeCurrencyForInstrument(symbol, symbol.asset_type ?? null);
   return (
@@ -370,10 +580,24 @@ function InstrumentCard({
         </div>
         {quote && (
           <div className={`company-price ${quote.change_pct >= 0 ? "pos" : "neg"}`}>
+            {commodityUnitControl}
             <div className="price-last">
-              {formatPrice(quote.last_price, displayCurrency, nativeCurrency, usdInrRate)}
+              {formatUnitPrice(
+                quote.last_price,
+                displayCurrency,
+                nativeCurrency,
+                usdInrRate,
+                commodityConversion,
+              )}
+              {commodityConversion && <span className="price-unit">/{commodityConversion.suffix}</span>}
             </div>
             <div className="price-change">{formatPct(quote.change_pct)}</div>
+            {commodityConversion && (
+              <div className="native-quote">
+                Native {formatPrice(quote.last_price, displayCurrency, nativeCurrency, usdInrRate)}
+                /{commodityConversion.spec.quoteUnit}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -381,11 +605,29 @@ function InstrumentCard({
         <div className="company-stats">
           <div>
             <label>High</label>
-            <span>{formatPrice(quote.day_high, displayCurrency, nativeCurrency, usdInrRate)}</span>
+            <span>
+              {formatUnitPrice(
+                quote.day_high,
+                displayCurrency,
+                nativeCurrency,
+                usdInrRate,
+                commodityConversion,
+              )}
+              {commodityConversion ? `/${commodityConversion.suffix}` : ""}
+            </span>
           </div>
           <div>
             <label>Low</label>
-            <span>{formatPrice(quote.day_low, displayCurrency, nativeCurrency, usdInrRate)}</span>
+            <span>
+              {formatUnitPrice(
+                quote.day_low,
+                displayCurrency,
+                nativeCurrency,
+                usdInrRate,
+                commodityConversion,
+              )}
+              {commodityConversion ? `/${commodityConversion.suffix}` : ""}
+            </span>
           </div>
           <div><label>Vol</label><span>{Math.round(quote.volume).toLocaleString("en-IN")}</span></div>
           <div><label>As of</label><span>{quote.as_of}</span></div>
@@ -553,6 +795,8 @@ export function StrategyPage() {
   const [capital, setCapital] = useState(100000);
   const [displayCurrency, setDisplayCurrency] = useState<MoneyCurrency>("INR");
   const [usdInrRate, setUsdInrRate] = useState<number | null>(null);
+  const [commodityUnitId, setCommodityUnitId] = useState("native");
+  const [customCommodityAmount, setCustomCommodityAmount] = useState(10);
 
   const [aggregateResult, setAggregateResult] = useState<{
     aggregate: AggregateResult; per_strategy: PerStrategyResult[];
@@ -593,6 +837,17 @@ export function StrategyPage() {
     setActiveStrategy(null);
     setAggregateResult(null);
     setAiOpen(false);
+  }, [selected]);
+
+  useEffect(() => {
+    const spec = commoditySpecForInstrument(selected);
+    if (!spec) {
+      setCommodityUnitId("native");
+      setCustomCommodityAmount(10);
+      return;
+    }
+    setCommodityUnitId(spec.defaultUnitId);
+    setCustomCommodityAmount(spec.custom.defaultAmount);
   }, [selected]);
 
   const grouped = useMemo(() => {
@@ -677,6 +932,21 @@ export function StrategyPage() {
   const nativeCurrency = nativeCurrencyForInstrument(selected, assetType);
   const moneyMultiplier = currencyMultiplier(nativeCurrency, displayCurrency, usdInrRate);
   const showCurrencyToggle = defaultCurrencyForAsset(assetType) === "USD";
+  const commoditySpec = commoditySpecForInstrument(selected);
+  const commodityConversion = resolveCommodityConversion(
+    commoditySpec,
+    commodityUnitId,
+    customCommodityAmount,
+  );
+  const commodityUnitControl = commoditySpec ? (
+    <CommodityUnitControl
+      spec={commoditySpec}
+      value={commodityConversion?.unitId ?? commoditySpec.defaultUnitId}
+      customAmount={customCommodityAmount}
+      onChange={setCommodityUnitId}
+      onCustomAmountChange={setCustomCommodityAmount}
+    />
+  ) : null;
 
   const headerBlock = (
     <div className="strategy-workspace-head">
@@ -795,6 +1065,8 @@ export function StrategyPage() {
               quote={quote}
               displayCurrency={displayCurrency}
               usdInrRate={usdInrRate}
+              commodityConversion={commodityConversion}
+              commodityUnitControl={commodityUnitControl}
             />
 
             <div className="strategy-actions">

@@ -1407,11 +1407,79 @@ button {
 .company-symbol { font-size: 20px; font-weight: 700; }
 .company-name { font-size: 13px; color: var(--text-muted); }
 .instrument-meta { margin-top: 2px; font-size: 11px; color: var(--text-dim); }
-.company-price { text-align: right; }
+.company-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
 .price-last { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.price-unit {
+  margin-left: 3px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
 .price-change { font-size: 13px; font-variant-numeric: tabular-nums; }
 .company-price.pos { color: var(--success); }
 .company-price.neg { color: var(--danger); }
+.native-quote {
+  margin-top: 2px;
+  color: var(--text-dim);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+.commodity-unit-control {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 6px;
+  margin-bottom: 6px;
+  color: var(--text-muted);
+}
+.commodity-unit-control label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.commodity-unit-control select,
+.commodity-custom-input {
+  min-height: 30px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
+}
+.commodity-unit-control select {
+  min-width: 96px;
+  padding: 5px 28px 5px 8px;
+  font-size: 12px;
+}
+.commodity-custom-input {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.commodity-custom-input input {
+  width: 78px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 5px 6px 5px 8px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.commodity-custom-input span {
+  padding-right: 8px;
+  color: var(--text-dim);
+  font-size: 11px;
+  text-transform: none;
+  letter-spacing: 0;
+}
 .company-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1911,6 +1979,7 @@ button {
   .strategy-source-pill,
   .strategy-head-actions,
   .currency-toggle-wrap,
+  .commodity-unit-control,
   .company-price {
     align-self: flex-start;
     align-items: flex-start;
