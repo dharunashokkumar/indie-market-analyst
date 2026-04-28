@@ -17,6 +17,7 @@ Event kinds emitted:
 from __future__ import annotations
 
 import asyncio
+import os
 import re
 import time
 from collections.abc import AsyncIterator
@@ -51,6 +52,8 @@ class _NormState:
 _THINK_OPEN = re.compile(r"<think(?:ing)?>", re.IGNORECASE)
 _THINK_CLOSE = re.compile(r"</think(?:ing)?>", re.IGNORECASE)
 _HANDOFF_LINE = re.compile(r"^\s*→\s*\{.*?\}\s*$", re.MULTILINE)
+_DEFAULT_HISTORY_MESSAGES = 20
+_DEFAULT_HISTORY_MAX_CHARS = 32_000
 
 
 async def run_turn(
@@ -59,6 +62,11 @@ async def run_turn(
     """Run a single user turn against the swarm, streaming normalized events."""
     session: Session = get_session(session_id) if session_id else new_session()
     store = get_store()
+    history = store.get_messages_for_llm(
+        session.id,
+        limit=_env_int("CHAT_HISTORY_MESSAGES", _DEFAULT_HISTORY_MESSAGES),
+        max_chars=_env_int("CHAT_HISTORY_MAX_CHARS", _DEFAULT_HISTORY_MAX_CHARS),
+    )
     store.add_message(session.id, "user", user_text)
 
     team_name = team_override or pick_team(user_text)
@@ -74,8 +82,9 @@ async def run_turn(
     ctx: dict[str, Any] = {"tool_calls": [], "session_id": session.id}
     state = _NormState()
     final_deltas: list[str] = []
+    run_input = [*history, {"role": "user", "content": user_text}]
     try:
-        result = Runner.run_streamed(root_agent, input=user_text, context=ctx)
+        result = Runner.run_streamed(root_agent, input=run_input, context=ctx)
         async for ev in result.stream_events():
             for norm in _normalize(ev, state):
                 if norm.kind == "delta" and isinstance(norm.data, str):
@@ -91,6 +100,17 @@ async def run_turn(
         raise
     except Exception as e:  # noqa: BLE001
         yield StreamEvent("error", str(e))
+
+
+def _env_int(name: str, default: int) -> int:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    try:
+        value = int(raw)
+    except ValueError:
+        return default
+    return max(0, value)
 
 
 def _normalize(ev: Any, state: _NormState) -> list[StreamEvent]:

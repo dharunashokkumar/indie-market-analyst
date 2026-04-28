@@ -125,6 +125,55 @@ class MemoryStore:
             for r in rows
         ]
 
+    def get_messages_for_llm(
+        self,
+        session_id: str,
+        limit: int = 20,
+        max_chars: int = 32_000,
+    ) -> list[dict[str, str]]:
+        """Return recent chat history in Responses API message-list shape.
+
+        The database keeps the persistence format unchanged. This helper only
+        projects the most recent persisted rows into the message format accepted
+        by ``Runner.run_streamed``.
+        """
+        limit = max(0, int(limit))
+        max_chars = max(0, int(max_chars))
+        if limit == 0 or max_chars == 0:
+            return []
+
+        with self._conn() as c:
+            rows = c.execute(
+                """
+                SELECT role, content FROM messages
+                WHERE session_id=? AND role IN ('user', 'assistant', 'system', 'developer')
+                ORDER BY created_at DESC, rowid DESC
+                LIMIT ?
+                """,
+                (session_id, limit),
+            ).fetchall()
+
+        messages = [
+            {"role": role, "content": content}
+            for role, content in reversed(rows)
+            if isinstance(content, str) and content.strip()
+        ]
+
+        kept_reversed: list[dict[str, str]] = []
+        used_chars = 0
+        for msg in reversed(messages):
+            content_len = len(msg["content"])
+            if used_chars + content_len > max_chars:
+                if not kept_reversed:
+                    kept_reversed.append({
+                        "role": msg["role"],
+                        "content": msg["content"][-max_chars:],
+                    })
+                break
+            kept_reversed.append(msg)
+            used_chars += content_len
+        return list(reversed(kept_reversed))
+
     # ---- session listing / search / delete ----
     def list_sessions(self, limit: int = 200) -> list[dict[str, Any]]:
         """Return sessions newest-first with a preview of the first user message."""
