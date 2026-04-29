@@ -576,3 +576,478 @@ export function exportTradesUrl(runId: string): string {
 export function exportMetricsUrl(runId: string): string {
   return `/runs/${runId}/metrics.json`;
 }
+
+// ---------- Intraday scanner ----------
+
+export type IntradaySource = "nse_direct" | "yfinance";
+export type IntradayUniverse = "nifty50" | "nifty200" | "nifty500" | "fno" | "full_nse" | "custom_csv";
+export type IntradayDirection = "LONG" | "SHORT";
+export type IntradayDetectorDirection = IntradayDirection | "NEUTRAL";
+export type IntradayModeId = "1A" | "1B" | "2" | "3" | "4" | "5" | "6" | "7";
+export type IntradayMarketState =
+  | "PRE_MARKET"
+  | "PRE_OPEN"
+  | "OPEN"
+  | "LAST_HOUR"
+  | "POST_MARKET"
+  | "CLOSED"
+  | "WEEKEND";
+export type IntradayConviction = "fire" | "confirm" | "watch";
+
+export type IntradaySettings = {
+  default_source: IntradaySource;
+  fallback_source: IntradaySource;
+  nse_cookies_configured: boolean;
+  default_universe: IntradayUniverse;
+  auto_poll_interval_seconds: 30 | 60 | 300 | 900;
+};
+
+export type IntradaySettingsUpdate = {
+  default_source?: IntradaySource;
+  fallback_source?: IntradaySource;
+  nse_cookies?: string;
+  default_universe?: IntradayUniverse;
+  auto_poll_interval_seconds?: 30 | 60 | 300 | 900;
+};
+
+export type IntradayUniverseOption = {
+  id: IntradayUniverse;
+  label: string;
+  description: string;
+  size: number;
+  available: boolean;
+  source: "static_csv" | "custom_csv" | "local_csv";
+  static_path: string | null;
+  merge_movers_default: boolean;
+};
+
+export type IntradayCustomCsvUploadResponse = {
+  universe: "custom_csv";
+  size: number;
+  path: string;
+};
+
+export type IntradayModeContext = {
+  mode_id: IntradayModeId;
+  mode_label: string;
+  market_state: IntradayMarketState;
+  ist_time: string;
+  is_market_day: boolean;
+  data_freshness: string;
+  source: string | null;
+};
+
+export type IntradayDetectorResult = {
+  name: string;
+  fired: boolean;
+  strength: number;
+  direction: IntradayDetectorDirection;
+  reason: string | null;
+  metadata: Record<string, unknown>;
+};
+
+export type IntradayPick = {
+  symbol: string;
+  direction: IntradayDirection;
+  probability: number;
+  detectors_fired: string[];
+  detector_results: IntradayDetectorResult[];
+  volume_x_avg: number;
+  pct_change: number;
+  ltp: number;
+  conviction: IntradayConviction;
+  asm_gsm_tags: string[];
+  metadata: Record<string, unknown>;
+};
+
+export type IntradayScanError = {
+  symbol: string | null;
+  stage: string;
+  message: string;
+};
+
+export type IntradayScanResult = {
+  scan_id: string;
+  universe: IntradayUniverse;
+  source: IntradaySource;
+  interval: string;
+  mode: IntradayModeContext;
+  created_at: string;
+  completed_at: string | null;
+  picks: IntradayPick[];
+  watch_only: IntradayPick[];
+  errors: IntradayScanError[];
+  metadata: Record<string, unknown>;
+};
+
+export type IntradayScanRequest = {
+  universe?: IntradayUniverse;
+  source?: IntradaySource;
+  source_override?: IntradaySource;
+  mode?: IntradayModeId;
+  mode_override?: IntradayModeId;
+  interval?: string;
+  lookback?: string;
+  merge_movers?: boolean;
+  max_symbols?: number;
+  enforce_liquidity?: boolean;
+  scan_concurrency?: number;
+};
+
+export type IntradayCandle = {
+  timestamp: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  source: IntradaySource;
+};
+
+export type IntradayOverlayPoint = {
+  time: string;
+  value: number;
+};
+
+export type IntradayDetectorOverlayPoint = {
+  time: string;
+  detector: string;
+  direction: IntradayDetectorDirection;
+  strength: number;
+  reason: string | null;
+};
+
+export type IntradayChartOverlays = {
+  vwap: IntradayOverlayPoint[];
+  orb_high: IntradayOverlayPoint[];
+  orb_low: IntradayOverlayPoint[];
+  prev_day_high: IntradayOverlayPoint[];
+  prev_day_low: IntradayOverlayPoint[];
+  ma20: IntradayOverlayPoint[];
+  ma50: IntradayOverlayPoint[];
+  volume_ma: IntradayOverlayPoint[];
+  pivot: IntradayOverlayPoint[];
+  r1: IntradayOverlayPoint[];
+  s1: IntradayOverlayPoint[];
+  detector_points: IntradayDetectorOverlayPoint[];
+};
+
+export type IntradayChartResponse = {
+  symbol: string;
+  interval: string;
+  source: string;
+  candles: IntradayCandle[];
+  overlays: IntradayChartOverlays;
+  detector_results: IntradayDetectorResult[];
+  as_of: string;
+};
+
+export type IntradayActivePickStatus =
+  | "active"
+  | "working"
+  | "fading"
+  | "flat"
+  | "stale"
+  | "error";
+
+export type IntradayActivePick = {
+  active_id: string;
+  scan_id: string | null;
+  symbol: string;
+  pick: IntradayPick;
+  activated_at: string;
+  status: IntradayActivePickStatus;
+  last_ltp: number | null;
+  last_checked_at: string | null;
+  move_from_scan_pct: number | null;
+  source: string | null;
+  message: string | null;
+  metadata: Record<string, unknown>;
+};
+
+export type IntradayActivePicksResponse = {
+  mode: IntradayModeContext;
+  active: IntradayActivePick[];
+  as_of: string;
+};
+
+export type IntradaySpecificStockResult = {
+  symbol: string;
+  source: string;
+  interval: string;
+  mode: IntradayModeContext;
+  pick: IntradayPick | null;
+  chart: IntradayChartResponse;
+  detector_results: IntradayDetectorResult[];
+  as_of: string;
+  message: string | null;
+};
+
+export type IntradayMarketCue = {
+  group: "global" | "adr" | "fx_commodity";
+  label: string;
+  symbol: string;
+  last: number | null;
+  change_pct: number | null;
+  source: string;
+  as_of: string | null;
+  status: string;
+};
+
+export type IntradayPremarketWatchItem = {
+  symbol: string;
+  bias: IntradayDetectorDirection;
+  probability: number | null;
+  reason: string;
+  source: string;
+};
+
+export type IntradayPreMarketSnapshot = {
+  market_date: string;
+  mode: IntradayModeContext;
+  as_of: string;
+  global_cues: IntradayMarketCue[];
+  adrs: IntradayMarketCue[];
+  fx_commodities: IntradayMarketCue[];
+  fii_dii: Record<string, unknown>;
+  watchlist: IntradayPremarketWatchItem[];
+  errors: string[];
+  metadata: Record<string, unknown>;
+};
+
+export type IntradayPreOpenRow = {
+  symbol: string;
+  ltp: number | null;
+  indicative_open: number | null;
+  pct_change: number | null;
+  volume: number | null;
+};
+
+export type IntradayPreOpenWatchItem = {
+  symbol: string;
+  bias: IntradayDetectorDirection;
+  pct_change: number | null;
+  ltp: number | null;
+  volume: number | null;
+  reason: string;
+};
+
+export type IntradayPreOpenSnapshot = {
+  market_date: string;
+  mode: IntradayModeContext;
+  as_of: string;
+  rows: IntradayPreOpenRow[];
+  watchlist: IntradayPreOpenWatchItem[];
+  errors: string[];
+  metadata: Record<string, number>;
+};
+
+export type IntradayPostMarketReviewRow = {
+  symbol: string;
+  direction: IntradayDirection;
+  probability: number;
+  scan_ltp: number;
+  close_ltp: number | null;
+  directional_move_pct: number | null;
+  favorable_excursion_pct: number | null;
+  adverse_excursion_pct: number | null;
+  outcome: "worked" | "missed" | "flat" | "no_data";
+  scan_id: string;
+  notes: string;
+};
+
+export type IntradayPostMarketReview = {
+  market_date: string;
+  mode: IntradayModeContext;
+  as_of: string;
+  rows: IntradayPostMarketReviewRow[];
+  summary: Record<string, number>;
+  errors: string[];
+  metadata: Record<string, number>;
+};
+
+export type IntradayWeekendCue = {
+  label: string;
+  symbol: string;
+  weekly_change_pct: number | null;
+  last: number | null;
+  source: string;
+  status: string;
+};
+
+export type IntradayWeekendWatchItem = {
+  symbol: string;
+  bias: IntradayDetectorDirection;
+  probability: number;
+  reason: string;
+  source_scan_id: string;
+};
+
+export type IntradayWeekendSnapshot = {
+  week_key: string;
+  mode: IntradayModeContext;
+  as_of: string;
+  global_cues: IntradayWeekendCue[];
+  fii_dii_summary: Record<string, unknown>;
+  earnings_calendar: Record<string, unknown>[];
+  watchlist: IntradayWeekendWatchItem[];
+  errors: string[];
+  metadata: Record<string, number>;
+};
+
+export async function getIntradaySettings(): Promise<IntradaySettings | null> {
+  const r = await fetch("/intraday/settings");
+  return r.ok ? r.json() : null;
+}
+
+export async function getIntradayMode(
+  modeOverride?: IntradayModeId | null,
+): Promise<IntradayModeContext | null> {
+  const query = modeOverride ? `?mode_override=${encodeURIComponent(modeOverride)}` : "";
+  const r = await fetch(`/intraday/mode${query}`);
+  return r.ok ? r.json() : null;
+}
+
+export async function getIntradayUniverses(): Promise<IntradayUniverseOption[]> {
+  const r = await fetch("/intraday/universes");
+  return r.ok ? r.json() : [];
+}
+
+export async function uploadIntradayCustomCsv(
+  csvText: string,
+): Promise<IntradayCustomCsvUploadResponse> {
+  const r = await fetch("/intraday/universes/custom-csv", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ csv_text: csvText }),
+  });
+  if (!r.ok) {
+    throw new Error(`/intraday/universes/custom-csv failed (${r.status}): ${await r.text()}`);
+  }
+  return r.json();
+}
+
+export async function updateIntradaySettings(
+  update: IntradaySettingsUpdate,
+): Promise<IntradaySettings> {
+  const r = await fetch("/intraday/settings", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(update),
+  });
+  if (!r.ok) {
+    throw new Error(`/intraday/settings failed (${r.status}): ${await r.text()}`);
+  }
+  return r.json();
+}
+
+export async function runIntradayScan(
+  args: IntradayScanRequest,
+): Promise<IntradayScanResult> {
+  const r = await fetch("/intraday/scan", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(args),
+  });
+  if (!r.ok) {
+    throw new Error(`/intraday/scan failed (${r.status}): ${await r.text()}`);
+  }
+  return r.json();
+}
+
+export async function getIntradayScan(scanId: string): Promise<IntradayScanResult | null> {
+  const r = await fetch(`/intraday/scan/${encodeURIComponent(scanId)}`);
+  return r.ok ? r.json() : null;
+}
+
+export async function getIntradayPicksToday(): Promise<IntradayScanResult[]> {
+  const r = await fetch("/intraday/picks/today");
+  return r.ok ? r.json() : [];
+}
+
+export async function getIntradayChart(args: {
+  symbol: string;
+  interval?: string;
+  lookback?: string;
+  source?: IntradaySource;
+}): Promise<IntradayChartResponse | null> {
+  const params = new URLSearchParams();
+  if (args.interval) params.set("interval", args.interval);
+  if (args.lookback) params.set("lookback", args.lookback);
+  if (args.source) params.set("source", args.source);
+  const query = params.toString();
+  const r = await fetch(
+    `/intraday/chart/${encodeURIComponent(args.symbol)}${query ? `?${query}` : ""}`,
+  );
+  return r.ok ? r.json() : null;
+}
+
+export async function getIntradaySpecificStock(args: {
+  symbol: string;
+  interval?: string;
+  lookback?: string;
+  source?: IntradaySource;
+}): Promise<IntradaySpecificStockResult | null> {
+  const params = new URLSearchParams();
+  if (args.interval) params.set("interval", args.interval);
+  if (args.lookback) params.set("lookback", args.lookback);
+  if (args.source) params.set("source", args.source);
+  const query = params.toString();
+  const r = await fetch(
+    `/intraday/symbol/${encodeURIComponent(args.symbol)}${query ? `?${query}` : ""}`,
+  );
+  return r.ok ? r.json() : null;
+}
+
+export async function getIntradayActivePicks(
+  source?: IntradaySource,
+): Promise<IntradayActivePicksResponse | null> {
+  const query = source ? `?source=${encodeURIComponent(source)}` : "";
+  const r = await fetch(`/intraday/picks/active${query}`);
+  return r.ok ? r.json() : null;
+}
+
+export async function postIntradayActivePick(args: {
+  symbol: string;
+  scan_id?: string | null;
+  pick?: IntradayPick;
+  source?: IntradaySource;
+}): Promise<IntradayActivePicksResponse> {
+  const r = await fetch("/intraday/picks/active", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(args),
+  });
+  if (!r.ok) {
+    throw new Error(`/intraday/picks/active failed (${r.status}): ${await r.text()}`);
+  }
+  return r.json();
+}
+
+export async function getIntradayPreMarket(
+  refresh = false,
+): Promise<IntradayPreMarketSnapshot | null> {
+  const r = await fetch(`/intraday/premarket/today${refresh ? "?refresh=true" : ""}`);
+  return r.ok ? r.json() : null;
+}
+
+export async function getIntradayPreOpen(
+  refresh = false,
+): Promise<IntradayPreOpenSnapshot | null> {
+  const r = await fetch(`/intraday/preopen/today${refresh ? "?refresh=true" : ""}`);
+  return r.ok ? r.json() : null;
+}
+
+export async function getIntradayPostMarket(
+  refresh = false,
+): Promise<IntradayPostMarketReview | null> {
+  const r = await fetch(`/intraday/postmarket/today${refresh ? "?refresh=true" : ""}`);
+  return r.ok ? r.json() : null;
+}
+
+export async function getIntradayWeekend(
+  refresh = false,
+): Promise<IntradayWeekendSnapshot | null> {
+  const r = await fetch(`/intraday/weekend/this${refresh ? "?refresh=true" : ""}`);
+  return r.ok ? r.json() : null;
+}

@@ -24,6 +24,7 @@ from backtest.loaders.mcx_loader import get_mcx_icomdex, get_mcx_quote, is_mcx_s
 from backtest.loaders.registry import load as load_ohlcv
 from backtest.strategies import STRATEGIES
 from backtest.strategies.summary import aggregate_runs, summarize_run
+from intraday_engine.api.routes import router as intraday_router
 
 from .agent.orchestrator import run_turn
 from .data.instruments import instrument_groups, search_instruments
@@ -46,6 +47,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.include_router(intraday_router)
 
 
 class ChatRequest(BaseModel):

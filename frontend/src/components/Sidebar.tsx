@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { BarChart3, LineChart, MessageSquare, PanelLeftClose, Plus } from "lucide-react";
+import {
+  Activity,
+  BarChart3,
+  LineChart,
+  MessageSquare,
+  PanelLeftClose,
+  Plus,
+} from "lucide-react";
 import {
   deleteSession,
   listSessions,
@@ -112,6 +119,10 @@ export function Sidebar({
         <NavLink to="/strategy" className="sidebar-nav-link">
           <LineChart size={14} />
           Strategy
+        </NavLink>
+        <NavLink to="/intraday" className="sidebar-nav-link">
+          <Activity size={14} />
+          Intraday
         </NavLink>
       </nav>
 

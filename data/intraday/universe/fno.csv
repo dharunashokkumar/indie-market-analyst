@@ -1,0 +1,210 @@
+symbol,yahoo_symbol,name,series,isin,industry,source,as_of
+360ONE,360ONE.NS,360 ONE WAM LIMITED,EQ,INE466L01038,Stockbroking & Allied,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ABB,ABB.NS,ABB India Limited,EQ,INE117A01022,Heavy Electrical Equipment,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ABCAPITAL,ABCAPITAL.NS,Aditya Birla Capital Limited,EQ,INE674K01013,Investment Company,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ADANIENSOL,ADANIENSOL.NS,Adani Energy Solutions Limited,EQ,INE931S01010,Power Distribution,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ADANIENT,ADANIENT.NS,Adani Enterprises Limited,EQ,INE423A01024,Trading - Minerals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ADANIGREEN,ADANIGREEN.NS,Adani Green Energy Limited,EQ,INE364U01010,Power Generation,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ADANIPORTS,ADANIPORTS.NS,Adani Ports and Special Economic Zone Limited,EQ,INE742F01042,Port & Port services,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ADANIPOWER,ADANIPOWER.NS,Adani Power Limited,EQ,INE814H01029,Integrated Power Utilities,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ALKEM,ALKEM.NS,Alkem Laboratories Limited,EQ,INE540L01014,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+AMBER,AMBER.NS,Amber Enterprises India Limited,EQ,INE371P01015,Household Appliances,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+AMBUJACEM,AMBUJACEM.NS,Ambuja Cements Limited,EQ,INE079A01024,Cement & Cement Products,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ANGELONE,ANGELONE.NS,Angel One Limited,EQ,INE732I01021,Stockbroking & Allied,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+APLAPOLLO,APLAPOLLO.NS,APL Apollo Tubes Limited,EQ,INE702C01027,Iron & Steel Products,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+APOLLOHOSP,APOLLOHOSP.NS,Apollo Hospitals Enterprise Limited,EQ,INE437A01024,Hospital,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ASHOKLEY,ASHOKLEY.NS,Ashok Leyland Limited,EQ,INE208A01029,Commercial Vehicles,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ASIANPAINT,ASIANPAINT.NS,Asian Paints Limited,EQ,INE021A01026,Paints,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ASTRAL,ASTRAL.NS,Astral Limited,EQ,INE006I01046,Plastic Products - Industrial,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+AUBANK,AUBANK.NS,AU Small Finance Bank Limited,EQ,INE949L01017,Other Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+AUROPHARMA,AUROPHARMA.NS,Aurobindo Pharma Limited,EQ,INE406A01037,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+AXISBANK,AXISBANK.NS,Axis Bank Limited,EQ,INE238A01034,Private Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BAJAJ-AUTO,BAJAJ-AUTO.NS,Bajaj Auto Limited,EQ,INE917I01010,2/3 Wheelers,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BAJAJFINSV,BAJAJFINSV.NS,Bajaj Finserv Limited,EQ,INE918I01026,Holding Company,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BAJAJHLDNG,BAJAJHLDNG.NS,Bajaj Holdings & Investment Limited,EQ,INE118A01012,Holding Company,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BAJFINANCE,BAJFINANCE.NS,Bajaj Finance Limited,EQ,INE296A01032,Non Banking Financial Company (NBFC),nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BANDHANBNK,BANDHANBNK.NS,Bandhan Bank Limited,EQ,INE545U01014,Private Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BANKBARODA,BANKBARODA.NS,Bank of Baroda,EQ,INE028A01039,Public Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BANKINDIA,BANKINDIA.NS,Bank of India,EQ,INE084A01016,Public Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BDL,BDL.NS,Bharat Dynamics Limited,EQ,INE171Z01026,Aerospace & Defense,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BEL,BEL.NS,Bharat Electronics Limited,EQ,INE263A01024,Aerospace & Defense,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BHARATFORG,BHARATFORG.NS,Bharat Forge Limited,EQ,INE465A01025,Auto Components & Equipments,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BHARTIARTL,BHARTIARTL.NS,Bharti Airtel Limited,EQ,INE397D01024,Telecom - Cellular & Fixed line services,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BHEL,BHEL.NS,Bharat Heavy Electricals Limited,EQ,INE257A01026,Heavy Electrical Equipment,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BIOCON,BIOCON.NS,Biocon Limited,EQ,INE376G01013,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BLUESTARCO,BLUESTARCO.NS,Blue Star Limited,EQ,INE472A01039,Household Appliances,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BOSCHLTD,BOSCHLTD.NS,Bosch Limited,EQ,INE323A01026,Auto Components & Equipments,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BPCL,BPCL.NS,Bharat Petroleum Corporation Limited,EQ,INE029A01011,Refineries & Marketing,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BRITANNIA,BRITANNIA.NS,Britannia Industries Limited,EQ,INE216A01030,Packaged Foods,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+BSE,BSE.NS,BSE Limited,EQ,INE118H01025,Exchange and Data Platform,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+CAMS,CAMS.NS,Computer Age Management Services Limited,EQ,INE596I01020,Depositories Clearing Houses and Other Intermediaries,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+CANBK,CANBK.NS,Canara Bank,EQ,INE476A01022,Public Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+CDSL,CDSL.NS,Central Depository Services (India) Limited,EQ,INE736A01011,Depositories Clearing Houses and Other Intermediaries,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+CGPOWER,CGPOWER.NS,CG Power and Industrial Solutions Limited,EQ,INE067A01029,Heavy Electrical Equipment,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+CHOLAFIN,CHOLAFIN.NS,Cholamandalam Investment and Finance Company Limited,EQ,INE121A01024,Non Banking Financial Company (NBFC),nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+CIPLA,CIPLA.NS,Cipla Limited,EQ,INE059A01026,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+COALINDIA,COALINDIA.NS,Coal India Limited,EQ,INE522F01014,Coal,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+COCHINSHIP,COCHINSHIP.NS,Cochin Shipyard Limited,EQ,INE704P01025,Ship Building & Allied Services,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+COFORGE,COFORGE.NS,Coforge Limited,EQ,INE591G01025,Computers - Software & Consulting,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+COLPAL,COLPAL.NS,Colgate Palmolive (India) Limited,EQ,INE259A01022,Personal Care,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+CONCOR,CONCOR.NS,Container Corporation of India Limited,EQ,INE111A01025,Logistics Solution Provider,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+CROMPTON,CROMPTON.NS,Crompton Greaves Consumer Electricals Limited,EQ,INE299U01018,Household Appliances,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+CUMMINSIND,CUMMINSIND.NS,Cummins India Limited,EQ,INE298A01020,Compressors Pumps & Diesel Engines,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+DABUR,DABUR.NS,Dabur India Limited,EQ,INE016A01026,Personal Care,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+DALBHARAT,DALBHARAT.NS,Dalmia Bharat Limited,EQ,INE00R701025,Cement & Cement Products,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+DELHIVERY,DELHIVERY.NS,Delhivery Limited,EQ,INE148O01028,Logistics Solution Provider,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+DIVISLAB,DIVISLAB.NS,Divi's Laboratories Limited,EQ,INE361B01024,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+DIXON,DIXON.NS,Dixon Technologies (India) Limited,EQ,INE935N01020,Consumer Electronics,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+DLF,DLF.NS,DLF Limited,EQ,INE271C01023,Residential Commercial Projects,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+DMART,DMART.NS,Avenue Supermarts Limited,EQ,INE192R01011,Diversified Retail,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+DRREDDY,DRREDDY.NS,Dr. Reddy's Laboratories Limited,EQ,INE089A01031,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+EICHERMOT,EICHERMOT.NS,Eicher Motors Limited,EQ,INE066A01021,2/3 Wheelers,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ETERNAL,ETERNAL.NS,ETERNAL LIMITED,EQ,INE758T01015,E-Retail/ E-Commerce,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+EXIDEIND,EXIDEIND.NS,Exide Industries Limited,EQ,INE302A01020,Auto Components & Equipments,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+FEDERALBNK,FEDERALBNK.NS,The Federal Bank  Limited,EQ,INE171A01029,Private Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+FORCEMOT,FORCEMOT.NS,FORCE MOTORS LTD,EQ,INE451A01017,Passenger Cars & Utility Vehicles,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+FORTIS,FORTIS.NS,Fortis Healthcare Limited,EQ,INE061F01013,Hospital,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+GAIL,GAIL.NS,GAIL (India) Limited,EQ,INE129A01019,Gas Transmission/Marketing,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+GLENMARK,GLENMARK.NS,Glenmark Pharmaceuticals Limited,EQ,INE935A01035,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+GMRAIRPORT,GMRAIRPORT.NS,GMR AIRPORTS LIMITED,EQ,INE776C01039,Airport & Airport services,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+GODFRYPHLP,GODFRYPHLP.NS,Godfrey Phillips India Limited,EQ,INE260B01028,Cigarettes & Tobacco Products,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+GODREJCP,GODREJCP.NS,Godrej Consumer Products Limited,EQ,INE102D01028,Personal Care,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+GODREJPROP,GODREJPROP.NS,Godrej Properties Limited,EQ,INE484J01027,Residential Commercial Projects,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+GRASIM,GRASIM.NS,Grasim Industries Limited,EQ,INE047A01021,Cement & Cement Products,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+HAL,HAL.NS,Hindustan Aeronautics Limited,EQ,INE066F01020,Aerospace & Defense,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+HAVELLS,HAVELLS.NS,Havells India Limited,EQ,INE176B01034,Consumer Electronics,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+HCLTECH,HCLTECH.NS,HCL Technologies Limited,EQ,INE860A01027,Computers - Software & Consulting,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+HDFCAMC,HDFCAMC.NS,HDFC Asset Management Company Limited,EQ,INE127D01025,Asset Management Company,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+HDFCBANK,HDFCBANK.NS,HDFC Bank Limited,EQ,INE040A01034,Private Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+HDFCLIFE,HDFCLIFE.NS,HDFC Life Insurance Company Limited,EQ,INE795G01014,Life Insurance,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+HEROMOTOCO,HEROMOTOCO.NS,Hero MotoCorp Limited,EQ,INE158A01026,2/3 Wheelers,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+HINDALCO,HINDALCO.NS,Hindalco Industries Limited,EQ,INE038A01020,Aluminium,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+HINDPETRO,HINDPETRO.NS,Hindustan Petroleum Corporation Limited,EQ,INE094A01015,Refineries & Marketing,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+HINDUNILVR,HINDUNILVR.NS,Hindustan Unilever Limited,EQ,INE030A01027,Diversified FMCG,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+HINDZINC,HINDZINC.NS,Hindustan Zinc Limited,EQ,INE267A01025,Zinc,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+HYUNDAI,HYUNDAI.NS,Hyundai Motor India Limited,EQ,INE0V6F01027,Passenger Cars & Utility Vehicles,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ICICIBANK,ICICIBANK.NS,ICICI Bank Limited,EQ,INE090A01021,Private Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ICICIGI,ICICIGI.NS,ICICI Lombard General Insurance Company Limited,EQ,INE765G01017,General Insurance,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ICICIPRULI,ICICIPRULI.NS,ICICI Prudential Life Insurance Company Limited,EQ,INE726G01019,Life Insurance,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+IDEA,IDEA.NS,Vodafone Idea Limited,EQ,INE669E01016,Telecom - Cellular & Fixed line services,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+IDFCFIRSTB,IDFCFIRSTB.NS,IDFC First Bank Limited,EQ,INE092T01019,Private Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+IEX,IEX.NS,Indian Energy Exchange Limited,EQ,INE022Q01020,Exchange and Data Platform,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+INDHOTEL,INDHOTEL.NS,The Indian Hotels Company Limited,EQ,INE053A01029,Hotels & Resorts,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+INDIANB,INDIANB.NS,Indian Bank,EQ,INE562A01011,Public Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+INDIGO,INDIGO.NS,InterGlobe Aviation Limited,EQ,INE646L01027,Airline,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+INDUSINDBK,INDUSINDBK.NS,IndusInd Bank Limited,EQ,INE095A01012,Private Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+INDUSTOWER,INDUSTOWER.NS,Indus Towers Limited,EQ,INE121J01017,Telecom - Infrastructure,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+INFY,INFY.NS,Infosys Limited,EQ,INE009A01021,Computers - Software & Consulting,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+INOXWIND,INOXWIND.NS,Inox Wind Limited,EQ,INE066P01011,Heavy Electrical Equipment,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+IOC,IOC.NS,Indian Oil Corporation Limited,EQ,INE242A01010,Refineries & Marketing,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+IREDA,IREDA.NS,Indian Renewable Energy Development Agency Limited,EQ,INE202E01016,Financial Institution,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+IRFC,IRFC.NS,Indian Railway Finance Corporation Limited,EQ,INE053F01010,Financial Institution,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ITC,ITC.NS,ITC Limited,EQ,INE154A01025,Diversified FMCG,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+JINDALSTEL,JINDALSTEL.NS,JINDAL STEEL LIMITED,EQ,INE749A01030,Iron & Steel,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+JIOFIN,JIOFIN.NS,Jio Financial Services Limited,EQ,INE758E01017,Investment Company,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+JSWENERGY,JSWENERGY.NS,JSW Energy Limited,EQ,INE121E01018,Power Generation,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+JSWSTEEL,JSWSTEEL.NS,JSW Steel Limited,EQ,INE019A01038,Iron & Steel,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+JUBLFOOD,JUBLFOOD.NS,Jubilant Foodworks Limited,EQ,INE797F01020,Restaurants,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+KALYANKJIL,KALYANKJIL.NS,Kalyan Jewellers India Limited,EQ,INE303R01014,Gems Jewellery And Watches,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+KAYNES,KAYNES.NS,Kaynes Technology India Limited,EQ,INE918Z01012,Industrial Products,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+KEI,KEI.NS,KEI Industries Limited,EQ,INE878B01027,Cables - Electricals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+KFINTECH,KFINTECH.NS,Kfin Technologies Limited,EQ,INE138Y01010,Depositories Clearing Houses and Other Intermediaries,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+KOTAKBANK,KOTAKBANK.NS,Kotak Mahindra Bank Limited,EQ,INE237A01036,Private Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+KPITTECH,KPITTECH.NS,KPIT Technologies Limited,EQ,INE04I401011,Computers - Software & Consulting,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+LAURUSLABS,LAURUSLABS.NS,Laurus Labs Limited,EQ,INE947Q01028,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+LICHSGFIN,LICHSGFIN.NS,LIC Housing Finance Limited,EQ,INE115A01026,Housing Finance Company,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+LICI,LICI.NS,Life Insurance Corporation Of India,EQ,INE0J1Y01017,Life Insurance,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+LODHA,LODHA.NS,Lodha Developers Limited,EQ,INE670K01029,Residential Commercial Projects,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+LT,LT.NS,Larsen & Toubro Limited,EQ,INE018A01030,Civil Construction,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+LTF,LTF.NS,L&T Finance Limited,EQ,INE498L01015,Investment Company,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+LTM,LTM.NS,LTM Limited,EQ,INE214T01019,Computers - Software & Consulting,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+LUPIN,LUPIN.NS,Lupin Limited,EQ,INE326A01037,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+M&M,M&M.NS,Mahindra & Mahindra Limited,EQ,INE101A01026,Passenger Cars & Utility Vehicles,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+MANAPPURAM,MANAPPURAM.NS,Manappuram Finance Limited,EQ,INE522D01027,Non Banking Financial Company (NBFC),nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+MANKIND,MANKIND.NS,Mankind Pharma Limited,EQ,INE634S01028,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+MARICO,MARICO.NS,Marico Limited,EQ,INE196A01026,Edible Oil,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+MARUTI,MARUTI.NS,Maruti Suzuki India Limited,EQ,INE585B01010,Passenger Cars & Utility Vehicles,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+MAXHEALTH,MAXHEALTH.NS,Max Healthcare Institute Limited,EQ,INE027H01010,Hospital,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+MAZDOCK,MAZDOCK.NS,Mazagon Dock Shipbuilders Limited,EQ,INE249Z01020,Ship Building & Allied Services,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+MCX,MCX.NS,Multi Commodity Exchange of India Limited,EQ,INE745G01043,Exchange and Data Platform,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+MFSL,MFSL.NS,Max Financial Services Limited,EQ,INE180A01020,Life Insurance,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+MOTHERSON,MOTHERSON.NS,Samvardhana Motherson International Limited,EQ,INE775A01035,Auto Components & Equipments,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+MOTILALOFS,MOTILALOFS.NS,Motilal Oswal Financial Services Limited,EQ,INE338I01027,Stockbroking & Allied,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+MPHASIS,MPHASIS.NS,MphasiS Limited,EQ,INE356A01018,Computers - Software & Consulting,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+MUTHOOTFIN,MUTHOOTFIN.NS,Muthoot Finance Limited,EQ,INE414G01012,Non Banking Financial Company (NBFC),nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+NAM-INDIA,NAM-INDIA.NS,Nippon Life India Asset Management Limited,EQ,INE298J01013,Asset Management Company,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+NATIONALUM,NATIONALUM.NS,National Aluminium Company Limited,EQ,INE139A01034,Aluminium,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+NAUKRI,NAUKRI.NS,Info Edge (India) Limited,EQ,INE663F01032,Internet & Catalogue Retail,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+NBCC,NBCC.NS,NBCC (India) Limited,EQ,INE095N01031,Civil Construction,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+NESTLEIND,NESTLEIND.NS,Nestle India Limited,EQ,INE239A01024,Packaged Foods,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+NHPC,NHPC.NS,NHPC Limited,EQ,INE848E01016,Power Generation,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+NMDC,NMDC.NS,NMDC Limited,EQ,INE584A01023,Industrial Minerals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+NTPC,NTPC.NS,NTPC Limited,EQ,INE733E01010,Power Generation,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+NUVAMA,NUVAMA.NS,Nuvama Wealth Management Limited,EQ,INE531F01023,Stockbroking & Allied,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+NYKAA,NYKAA.NS,FSN E-Commerce Ventures Limited,EQ,INE388Y01029,E-Retail/ E-Commerce,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+OBEROIRLTY,OBEROIRLTY.NS,Oberoi Realty Limited,EQ,INE093I01010,Residential Commercial Projects,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+OFSS,OFSS.NS,Oracle Financial Services Software Limited,EQ,INE881D01027,Software Products,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+OIL,OIL.NS,Oil India Limited,EQ,INE274J01014,Oil Exploration & Production,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ONGC,ONGC.NS,Oil & Natural Gas Corporation Limited,EQ,INE213A01029,Oil Exploration & Production,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PAGEIND,PAGEIND.NS,Page Industries Limited,EQ,INE761H01022,Garments & Apparels,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PATANJALI,PATANJALI.NS,Patanjali Foods Limited,EQ,INE619A01035,Edible Oil,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PAYTM,PAYTM.NS,One 97 Communications Limited,EQ,INE982J01020,Financial Technology (Fintech),nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PERSISTENT,PERSISTENT.NS,Persistent Systems Limited,EQ,INE262H01021,Computers - Software & Consulting,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PETRONET,PETRONET.NS,Petronet LNG Limited,EQ,INE347G01014,LPG/CNG/PNG/LNG Supplier,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PFC,PFC.NS,Power Finance Corporation Limited,EQ,INE134E01011,Financial Institution,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PGEL,PGEL.NS,PG Electroplast Limited,EQ,INE457L01029,Consumer Electronics,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PHOENIXLTD,PHOENIXLTD.NS,The Phoenix Mills Limited,EQ,INE211B01039,Residential Commercial Projects,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PIDILITIND,PIDILITIND.NS,Pidilite Industries Limited,EQ,INE318A01026,Specialty Chemicals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PIIND,PIIND.NS,PI Industries Limited,EQ,INE603J01030,Pesticides & Agrochemicals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PNB,PNB.NS,Punjab National Bank,EQ,INE160A01022,Public Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PNBHOUSING,PNBHOUSING.NS,PNB Housing Finance Limited,EQ,INE572E01012,Housing Finance Company,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+POLICYBZR,POLICYBZR.NS,PB Fintech Limited,EQ,INE417T01026,Financial Technology (Fintech),nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+POLYCAB,POLYCAB.NS,Polycab India Limited,EQ,INE455K01017,Cables - Electricals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+POWERGRID,POWERGRID.NS,Power Grid Corporation of India Limited,EQ,INE752E01010,Power - Transmission,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+POWERINDIA,POWERINDIA.NS,Hitachi Energy India Limited,EQ,INE07Y701011,Heavy Electrical Equipment,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PREMIERENE,PREMIERENE.NS,Premier Energies Limited,EQ,INE0BS701011,Other Electrical Equipment,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+PRESTIGE,PRESTIGE.NS,Prestige Estates Projects Limited,EQ,INE811K01011,Residential Commercial Projects,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+RBLBANK,RBLBANK.NS,RBL Bank Limited,EQ,INE976G01028,Private Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+RECLTD,RECLTD.NS,REC Limited,EQ,INE020B01018,Financial Institution,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+RELIANCE,RELIANCE.NS,Reliance Industries Limited,EQ,INE002A01018,Refineries & Marketing,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+RVNL,RVNL.NS,Rail Vikas Nigam Limited,EQ,INE415G01027,Civil Construction,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SAIL,SAIL.NS,Steel Authority of India Limited,EQ,INE114A01011,Iron & Steel,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SAMMAANCAP,SAMMAANCAP.NS,Sammaan Capital Limited,EQ,INE148I01020,Housing Finance Company,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SBICARD,SBICARD.NS,SBI Cards and Payment Services Limited,EQ,INE018E01016,Non Banking Financial Company (NBFC),nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SBILIFE,SBILIFE.NS,SBI Life Insurance Company Limited,EQ,INE123W01016,Life Insurance,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SBIN,SBIN.NS,State Bank of India,EQ,INE062A01020,Public Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SHREECEM,SHREECEM.NS,SHREE CEMENT LIMITED,EQ,INE070A01015,Cement & Cement Products,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SHRIRAMFIN,SHRIRAMFIN.NS,Shriram Finance Limited,EQ,INE721A01047,Non Banking Financial Company (NBFC),nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SIEMENS,SIEMENS.NS,Siemens Limited,EQ,INE003A01024,Heavy Electrical Equipment,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SOLARINDS,SOLARINDS.NS,Solar Industries India Limited,EQ,INE343H01029,Explosives,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SONACOMS,SONACOMS.NS,Sona BLW Precision Forgings Limited,EQ,INE073K01018,Auto Components & Equipments,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SRF,SRF.NS,SRF Limited,EQ,INE647A01010,Specialty Chemicals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SUNPHARMA,SUNPHARMA.NS,Sun Pharmaceutical Industries Limited,EQ,INE044A01036,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SUPREMEIND,SUPREMEIND.NS,Supreme Industries Limited,EQ,INE195A01028,Plastic Products - Industrial,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SUZLON,SUZLON.NS,Suzlon Energy Limited,EQ,INE040H01021,Heavy Electrical Equipment,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+SWIGGY,SWIGGY.NS,Swiggy Limited,EQ,INE00H001014,E-Retail/ E-Commerce,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+TATACONSUM,TATACONSUM.NS,TATA CONSUMER PRODUCTS LIMITED,EQ,INE192A01025,Tea & Coffee,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+TATAELXSI,TATAELXSI.NS,Tata Elxsi Limited,EQ,INE670A01012,Computers - Software & Consulting,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+TATAPOWER,TATAPOWER.NS,Tata Power Company Limited,EQ,INE245A01021,Integrated Power Utilities,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+TATASTEEL,TATASTEEL.NS,Tata Steel Limited,EQ,INE081A01020,Iron & Steel,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+TCS,TCS.NS,Tata Consultancy Services Limited,EQ,INE467B01029,Computers - Software & Consulting,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+TECHM,TECHM.NS,Tech Mahindra Limited,EQ,INE669C01036,Computers - Software & Consulting,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+TIINDIA,TIINDIA.NS,Tube Investments of India Limited,EQ,INE974X01010,Auto Components & Equipments,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+TITAN,TITAN.NS,Titan Company Limited,EQ,INE280A01028,Gems Jewellery And Watches,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+TMPV,TMPV.NS,Tata Motors Passenger Vehicles Limited,EQ,INE155A01022,Passenger Cars & Utility Vehicles,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+TORNTPHARM,TORNTPHARM.NS,Torrent Pharmaceuticals Limited,EQ,INE685A01028,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+TRENT,TRENT.NS,Trent Limited,EQ,INE849A01020,Speciality Retail,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+TVSMOTOR,TVSMOTOR.NS,TVS Motor Company Limited,EQ,INE494B01023,2/3 Wheelers,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ULTRACEMCO,ULTRACEMCO.NS,UltraTech Cement Limited,EQ,INE481G01011,Cement & Cement Products,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+UNIONBANK,UNIONBANK.NS,Union Bank of India,EQ,INE692A01016,Public Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+UNITDSPR,UNITDSPR.NS,United Spirits Limited,EQ,INE854D01024,Breweries & Distilleries,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+UNOMINDA,UNOMINDA.NS,UNO Minda Limited,EQ,INE405E01023,Auto Components & Equipments,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+UPL,UPL.NS,UPL Limited,EQ,INE628A01036,Pesticides & Agrochemicals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+VBL,VBL.NS,Varun Beverages Limited,EQ,INE200M01039,Other Beverages,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+VEDL,VEDL.NS,Vedanta Limited,EQ,INE205A01025,Diversified Metals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+VMM,VMM.NS,Vishal Mega Mart Limited,EQ,INE01EA01019,Diversified Retail,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+VOLTAS,VOLTAS.NS,Voltas Limited,EQ,INE226A01021,Household Appliances,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+WAAREEENER,WAAREEENER.NS,Waaree Energies Limited,EQ,INE377N01017,Other Electrical Equipment,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+WIPRO,WIPRO.NS,Wipro Limited,EQ,INE075A01022,Computers - Software & Consulting,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+YESBANK,YESBANK.NS,Yes Bank Limited,EQ,INE528G01035,Private Sector Bank,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29
+ZYDUSLIFE,ZYDUSLIFE.NS,Zydus Lifesciences Limited,EQ,INE010B01027,Pharmaceuticals,nse_equity_stockIndices_nifty500_isFNOSec,2026-04-29

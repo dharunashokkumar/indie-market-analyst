@@ -13,6 +13,13 @@ export default defineConfig({
       "/indices": "http://localhost:8000",
       "/market": "http://localhost:8000",
       "/strategy": "http://localhost:8000",
+      "/intraday": {
+        target: "http://localhost:8000",
+        bypass(req) {
+          if (req.headers.accept?.includes("text/html")) return "/index.html";
+          return undefined;
+        },
+      },
       "/health": "http://localhost:8000",
     },
   },

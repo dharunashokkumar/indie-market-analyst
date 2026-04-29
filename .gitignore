@@ -163,8 +163,34 @@ plans/
 !/sessions/.gitkeep
 !/runs/.gitkeep
 !/data/nse_equity_list.csv
+!/data/intraday/
+!/data/intraday/**/
+!/data/intraday/**/.gitkeep
+!/data/intraday/settings.example.json
+!/data/intraday/universe/nifty50.csv
+!/data/intraday/universe/nifty200.csv
+!/data/intraday/universe/nifty500.csv
+!/data/intraday/universe/fno.csv
+!/data/intraday/universe/full_nse.csv
+/data/intraday/settings.json
+/data/intraday/universe/custom.csv
+/data/intraday/cache/*
+/data/intraday/filters/*
+/data/intraday/picks/*
+/data/intraday/premarket/*
+/data/intraday/reviews/*
+/data/intraday/weekend/*
+!/data/intraday/cache/.gitkeep
+!/data/intraday/filters/.gitkeep
+!/data/intraday/picks/.gitkeep
+!/data/intraday/premarket/.gitkeep
+!/data/intraday/reviews/.gitkeep
+!/data/intraday/universe/.gitkeep
+!/data/intraday/weekend/.gitkeep
 
 # Internal planning docs — not for public repo
+plan.md
+docs/intraday/PLAN.md
 toslove.txt
 hallocination.md
 
@@ -172,6 +198,7 @@ hallocination.md
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
+frontend/tsconfig.tsbuildinfo
 
 # Override .env* to keep .env.example tracked
 !.env.example

@@ -1,0 +1,7 @@
+{
+  "default_source": "nse_direct",
+  "fallback_source": "yfinance",
+  "nse_cookies": "",
+  "default_universe": "nifty500",
+  "auto_poll_interval_seconds": 60
+}
