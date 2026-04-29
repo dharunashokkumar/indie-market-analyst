@@ -11,6 +11,7 @@ export default defineConfig({
       "/sessions": "http://localhost:8000",
       "/artifacts": "http://localhost:8000",
       "/indices": "http://localhost:8000",
+      "/market": "http://localhost:8000",
       "/strategy": "http://localhost:8000",
       "/health": "http://localhost:8000",
     },

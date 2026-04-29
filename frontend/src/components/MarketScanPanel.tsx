@@ -95,7 +95,7 @@ function ResultsTable({ rows }: { rows: ScanCompanyRow[] }) {
         <tbody>
           {filtered.map((r) => (
             <tr key={r.symbol}>
-              <td><CompanyLogo symbol={cleanSymbol(r.symbol)} name={r.name} size={20} /></td>
+              <td><CompanyLogo symbol={r.symbol} name={r.name} exchange="NSE" size={20} /></td>
               <td className="mono">{r.symbol}</td>
               <td className="ellipsis">{r.name}</td>
               <td>
@@ -132,9 +132,6 @@ function shortVerdict(v: string): string {
   if (v === "MOSTLY_BEARISH") return "BEARISH";
   if (v === "MIXED") return "MIXED";
   return "—";
-}
-function cleanSymbol(yahoo: string): string {
-  return yahoo.replace(/\.NS$/i, "").replace(/^\^/, "");
 }
 
 function MoodHero({ state }: { state: ScanState }) {
@@ -191,7 +188,7 @@ function TopList({ title, rows, kind }: {
       <ol>
         {rows.map((r) => (
           <li key={r.symbol}>
-            <CompanyLogo symbol={cleanSymbol(r.symbol)} name={r.name} size={22} />
+            <CompanyLogo symbol={r.symbol} name={r.name} exchange="NSE" size={22} />
             <div className="top-list-meta">
               <span className="mono">{r.symbol}</span>
               <span className="muted ellipsis">{r.name}</span>

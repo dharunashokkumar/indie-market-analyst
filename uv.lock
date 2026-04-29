@@ -1030,6 +1030,7 @@ dependencies = [
     { name = "jinja2" },
     { name = "lxml" },
     { name = "matplotlib" },
+    { name = "mcxlib" },
     { name = "numpy" },
     { name = "openai-agents", extra = ["litellm"] },
     { name = "pandas" },
@@ -1073,6 +1074,7 @@ requires-dist = [
     { name = "jinja2", specifier = ">=3.1.4" },
     { name = "lxml", specifier = ">=5.2.0" },
     { name = "matplotlib", specifier = ">=3.9.0" },
+    { name = "mcxlib", specifier = ">=0.3" },
     { name = "numpy", specifier = ">=1.26.0" },
     { name = "openai-agents", extras = ["litellm"], specifier = ">=0.14.2" },
     { name = "pandas", specifier = ">=2.2.0" },
@@ -1641,6 +1643,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/8b/eb/c0cfc62075dc6e1ec1c64d352ae09ac051d9334311ed226f1f425312848a/mcp-1.27.0.tar.gz", hash = "sha256:d3dc35a7eec0d458c1da4976a48f982097ddaab87e278c5511d5a4a56e852b83", size = 607509, upload-time = "2026-04-02T14:48:08.88Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9c/46/f6b4ad632c67ef35209a66127e4bddc95759649dd595f71f13fba11bdf9a/mcp-1.27.0-py3-none-any.whl", hash = "sha256:5ce1fa81614958e267b21fb2aa34e0aea8e2c6ede60d52aba45fd47246b4d741", size = 215967, upload-time = "2026-04-02T14:48:07.24Z" },
+]
+
+[[package]]
+name = "mcxlib"
+version = "0.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pandas" },
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/31/64/eb355f6415ef3f3eedd707f97e65726dfd4d6590a1bd376070d2ed657e08/mcxlib-0.3.tar.gz", hash = "sha256:f2d778f553b16dd9f09db0a096071a855c9b88e1da972d7377d06504e26971d7", size = 13573, upload-time = "2026-04-10T03:11:38.336Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/80/75/4892104c07a8a8cb6ec4ccb61053df5f94cd8e36b8dd0a8a37b561825991/mcxlib-0.3-py3-none-any.whl", hash = "sha256:2941176b367dcb9e3bb5f664064d3daedd75e6f79e8419962e182ae0892d347d", size = 12278, upload-time = "2026-04-10T03:11:37.29Z" },
 ]
 
 [[package]]

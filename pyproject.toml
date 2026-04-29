@@ -53,6 +53,7 @@ dependencies = [
     "pandas>=2.2.0",
     "numpy>=1.26.0",
     "yfinance>=0.2.40",
+    "mcxlib>=0.3",
     "httpx>=0.27.0",
     "beautifulsoup4>=4.12.0",
     "lxml>=5.2.0",

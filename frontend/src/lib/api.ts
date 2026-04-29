@@ -255,10 +255,77 @@ export type Quote = {
   volume: number;
   as_of: string;
   source: string;
+  sparkline?: { date: string; value: number }[];
+  expiry?: string | null;
+  expiry_iso?: string | null;
+  unit?: string | null;
+  open_interest?: number | null;
+  instrument?: string | null;
+  contract_symbol?: string | null;
+  as_of_estimated?: boolean;
 };
 
 export async function getQuote(symbol: string): Promise<Quote | null> {
   const r = await fetch(`/strategy/quote/${encodeURIComponent(symbol)}`);
+  if (!r.ok) return null;
+  return r.json();
+}
+
+export type IcomdexEntry = {
+  symbol: string;
+  instrument_code: string;
+  display_name: string;
+  ltp: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  percent_change: number;
+};
+
+export async function getMcxIcomdex(): Promise<Record<string, IcomdexEntry> | null> {
+  const r = await fetch("/strategy/mcx/icomdex");
+  if (!r.ok) return null;
+  return r.json();
+}
+
+export type MarketQuote = {
+  symbol: string;
+  name: string;
+  exchange: string;
+  currency: "INR" | "POINTS" | string;
+  last_price: number | null;
+  prev_close: number | null;
+  change_pct: number | null;
+  day_high: number | null;
+  day_low: number | null;
+  volume: number;
+  turnover: number;
+  as_of: string;
+  source: string;
+  sparkline: { date: string; value: number }[];
+};
+
+export type MarketOverview = {
+  indices: MarketQuote[];
+  watchlist: MarketQuote[];
+  most_traded: MarketQuote[];
+  top_volume: MarketQuote[];
+  top_gainers: MarketQuote[];
+  top_losers: MarketQuote[];
+  sectors: MarketQuote[];
+  breadth: {
+    advances: number;
+    declines: number;
+    unchanged: number;
+    total: number;
+  };
+  as_of_utc: string;
+  source: string;
+};
+
+export async function getMarketOverview(): Promise<MarketOverview | null> {
+  const r = await fetch("/market/overview");
   if (!r.ok) return null;
   return r.json();
 }

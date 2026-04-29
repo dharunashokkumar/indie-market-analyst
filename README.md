@@ -30,7 +30,7 @@ Most "financial LLM" demos happily hallucinate closing prices. This project inve
 
 - **Swarm orchestration.** Teams live as `config/swarm/*.yaml` — add a team, declare agents, wire handoffs. No code change.
 - **Tool-first design.** Reflection-based registry: drop a module under `tools/<category>/`, export `TOOLS = [...]`, done.
-- **Free data.** yfinance, NSE/BSE public endpoints, Google Finance scrape.
+- **Free data.** yfinance, MCX India via mcxlib, NSE/BSE public endpoints, Google Finance scrape.
 - **Deterministic backtester.** Pure pandas/numpy with Indian cost model (STT, stamp duty, exchange txn, SEBI fee, GST, Zerodha-style brokerage).
 - **Transparent reasoning.** UI exposes tool calls with args + result + duration, handoffs, and an optional reasoning drawer.
 - **Multi-model.** OpenRouter-backed; roles map to models in `config/models.yaml`.

@@ -1,8 +1,7 @@
 """Strategy dashboard instrument catalog.
 
 NSE company shares still come from the checked-in NSE equity CSV. The other
-asset classes are small curated Yahoo Finance symbol sets so the strategy
-runner can reuse the existing yfinance loader without paid APIs.
+asset classes are small curated symbol sets backed by free data loaders.
 """
 
 from __future__ import annotations
@@ -23,8 +22,8 @@ GROUPS: list[dict[str, str]] = [
     {
         "id": "commodity",
         "label": "Commodities",
-        "description": "Liquid global futures proxies for metals and energy.",
-        "source": "yfinance futures",
+        "description": "MCX-listed Indian commodity futures for metals and energy.",
+        "source": "MCX India via mcxlib",
     },
     {
         "id": "mutual_fund",
@@ -74,11 +73,18 @@ def _row(
 
 CURATED: dict[str, list[AssetRow]] = {
     "commodity": [
-        _row("GOLD", "GC=F", "Gold Futures", "USD", "COMEX"),
-        _row("SILVER", "SI=F", "Silver Futures", "USD", "COMEX"),
-        _row("COPPER", "HG=F", "Copper Futures", "USD", "COMEX"),
-        _row("CRUDE", "CL=F", "WTI Crude Oil Futures", "USD", "NYMEX"),
-        _row("NATGAS", "NG=F", "Natural Gas Futures", "USD", "NYMEX"),
+        _row("GOLD", "GOLD", "MCX Gold Futures (10g)", "INR", "MCX"),
+        _row("GOLDM", "GOLDM", "MCX Gold Mini Futures (100g)", "INR", "MCX"),
+        _row("GOLDGUINEA", "GOLDGUINEA", "MCX Gold Guinea Futures (8g)", "INR", "MCX"),
+        _row("GOLDPETAL", "GOLDPETAL", "MCX Gold Petal Futures (1g)", "INR", "MCX"),
+        _row("SILVER", "SILVER", "MCX Silver Futures (30kg)", "INR", "MCX"),
+        _row("SILVERM", "SILVERM", "MCX Silver Mini Futures (5kg)", "INR", "MCX"),
+        _row("SILVERMIC", "SILVERMIC", "MCX Silver Micro Futures (1kg)", "INR", "MCX"),
+        _row("COPPER", "COPPER", "MCX Copper Futures", "INR", "MCX"),
+        _row("CRUDEOIL", "CRUDEOIL", "MCX Crude Oil Futures", "INR", "MCX"),
+        _row("CRUDEOILM", "CRUDEOILM", "MCX Crude Oil Mini Futures", "INR", "MCX"),
+        _row("NATURALGAS", "NATURALGAS", "MCX Natural Gas Futures", "INR", "MCX"),
+        _row("NATGASMINI", "NATGASMINI", "MCX Natural Gas Mini Futures", "INR", "MCX"),
     ],
     "mutual_fund": [
         _row("NIFTYBEES", "NIFTYBEES.NS", "Nippon India ETF Nifty 50 BeES", "INR", "NSE"),
@@ -161,7 +167,7 @@ def search_instruments(asset_type: str, q: str = "", limit: int = 20) -> list[di
         {
             **row,
             "asset_type": asset_type,
-            "source": "yfinance",
+            "source": "mcxlib" if asset_type == "commodity" else "yfinance",
         }
         for row in rows[:limit]
     ]

@@ -3,16 +3,18 @@ import { useSearchParams } from "react-router-dom";
 import { EquityPanel } from "./Dashboards/EquityPanel";
 import { BacktestsPanel } from "./Dashboards/BacktestsPanel";
 import { HeatmapPanel } from "./Dashboards/HeatmapPanel";
+import { MarketOverviewPanel } from "./Dashboards/MarketOverviewPanel";
 
-type TabId = "equity" | "backtests" | "heatmap";
+type TabId = "market" | "equity" | "backtests" | "heatmap";
 const TABS: { id: TabId; label: string }[] = [
+  { id: "market", label: "Market" },
   { id: "equity", label: "Equity" },
   { id: "backtests", label: "Backtests" },
   { id: "heatmap", label: "Heatmap" },
 ];
 
 function asTab(v: string | null): TabId {
-  return v === "backtests" || v === "heatmap" ? v : "equity";
+  return v === "equity" || v === "backtests" || v === "heatmap" ? v : "market";
 }
 
 export function DashboardsPage() {
@@ -49,6 +51,7 @@ export function DashboardsPage() {
         </div>
       </header>
       <div className="dashboards-panel">
+        {tab === "market" && <MarketOverviewPanel />}
         {tab === "equity" && <EquityPanel />}
         {tab === "backtests" && <BacktestsPanel />}
         {tab === "heatmap" && <HeatmapPanel />}

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RefreshCw } from "lucide-react";
+import { CompanyLogo } from "../../components/CompanyLogo";
 import { getHeatmap, type HeatmapCell, type HeatmapSnapshot } from "../../lib/api";
 
 function cellColor(change: number | null | undefined): string {
@@ -21,6 +22,31 @@ function formatChange(v: number | null | undefined): string {
   return `${sign}${v.toFixed(2)}%`;
 }
 
+function cleanSymbol(symbol: string): string {
+  return symbol.replace(/\.NS$/i, "").replace(/\.BO$/i, "").replace(/^\^/, "");
+}
+
+function HeatmapIdentity({ cell }: { cell: HeatmapCell }) {
+  const isIndex = cell.symbol.startsWith("^");
+  const symbol = cleanSymbol(cell.symbol);
+  return (
+    <div className="heatmap-identity">
+      {!isIndex && (
+        <CompanyLogo
+          symbol={cell.symbol}
+          name={cell.name}
+          exchange={cell.symbol.endsWith(".BO") ? "BSE" : "NSE"}
+          size={22}
+        />
+      )}
+      <div className="heatmap-copy">
+        <div className="heatmap-name">{cell.name}</div>
+        <div className="heatmap-symbol">{symbol}</div>
+      </div>
+    </div>
+  );
+}
+
 function Grid({ title, cells }: { title: string; cells: HeatmapCell[] }) {
   if (!cells.length) return null;
   return (
@@ -34,7 +60,7 @@ function Grid({ title, cells }: { title: string; cells: HeatmapCell[] }) {
             style={{ background: cellColor(c.change_pct) }}
             title={`${c.name} (${c.symbol})`}
           >
-            <div className="heatmap-name">{c.name}</div>
+            <HeatmapIdentity cell={c} />
             <div className="heatmap-change">{formatChange(c.change_pct)}</div>
             {c.last !== null && c.last !== undefined && (
               <div className="heatmap-last">{c.last.toFixed(2)}</div>

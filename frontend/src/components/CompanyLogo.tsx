@@ -1,63 +1,28 @@
 import { useEffect, useState } from "react";
 
-// Curated overrides for symbols whose Clearbit domain isn't `<symbol>.com`.
-const DOMAIN_HINTS: Record<string, string> = {
-  RELIANCE: "ril.com",
-  TCS: "tcs.com",
-  INFY: "infosys.com",
-  HDFCBANK: "hdfcbank.com",
-  ICICIBANK: "icicibank.com",
-  KOTAKBANK: "kotak.com",
-  AXISBANK: "axisbank.com",
-  SBIN: "sbi.co.in",
-  ITC: "itcportal.com",
-  HINDUNILVR: "hul.co.in",
-  LT: "larsentoubro.com",
-  BAJFINANCE: "bajajfinserv.in",
-  BHARTIARTL: "airtel.in",
-  ASIANPAINT: "asianpaints.com",
-  MARUTI: "marutisuzuki.com",
-  TATAMOTORS: "tatamotors.com",
-  TATASTEEL: "tatasteel.com",
-  WIPRO: "wipro.com",
-  HCLTECH: "hcltech.com",
-  TECHM: "techmahindra.com",
-  ADANIENT: "adani.com",
-  ADANIPORTS: "adaniports.com",
-  ULTRACEMCO: "ultratechcement.com",
-  NESTLEIND: "nestle.in",
-  TITAN: "titancompany.in",
-  SUNPHARMA: "sunpharma.com",
-  POWERGRID: "powergridindia.com",
-  NTPC: "ntpc.co.in",
-  ONGC: "ongcindia.com",
-  COALINDIA: "coalindia.in",
-  M_M: "mahindra.com", // MM in NSE
-  JSWSTEEL: "jsw.in",
-  GRASIM: "grasim.com",
-  DRREDDY: "drreddys.com",
-  CIPLA: "cipla.com",
-  EICHERMOT: "eichermotors.com",
-  HEROMOTOCO: "heromotocorp.com",
-  BAJAJ_AUTO: "bajajauto.com",
-  BAJAJFINSV: "bajajfinserv.in",
-  DIVISLAB: "divislabs.com",
-  BRITANNIA: "britannia.co.in",
-  INDUSINDBK: "indusind.com",
-  TATACONSUM: "tataconsumer.com",
-  HDFCLIFE: "hdfclife.com",
-  SBILIFE: "sbilife.co.in",
-  UPL: "upl-ltd.com",
-  APOLLOHOSP: "apollohospitals.com",
-  PIDILITIND: "pidilite.com",
-  DABUR: "dabur.com",
-  GODREJCP: "godrejcp.com",
-};
+const LOGO_BASE_URL = "https://cdn.jsdelivr.net/gh/dharunashokkumar/indian-listed-company-logos@main";
 
-function logoUrl(symbol: string): string {
-  const key = symbol.replace(/[-&]/g, "_").toUpperCase();
-  const domain = DOMAIN_HINTS[key] ?? `${symbol.toLowerCase()}.com`;
-  return `https://logo.clearbit.com/${domain}`;
+function logoExchange(symbol: string, exchange?: string): "NSE" | "BSE" {
+  const upperSymbol = symbol.trim().toUpperCase();
+  const upperExchange = exchange?.trim().toUpperCase();
+  if (upperSymbol.endsWith(".BO") || upperExchange === "BSE") return "BSE";
+  return "NSE";
+}
+
+function logoTicker(symbol: string): string {
+  return symbol
+    .trim()
+    .toUpperCase()
+    .replace(/\.(NS|BO)$/i, "")
+    .replace(/^\^/, "")
+    .replace(/-/g, "_");
+}
+
+function logoUrl(symbol: string, exchange?: string): string {
+  const market = logoExchange(symbol, exchange);
+  const ticker = logoTicker(symbol);
+  const file = encodeURIComponent(`${market}_${ticker}.svg`);
+  return `${LOGO_BASE_URL}/${market.toLowerCase()}/${file}`;
 }
 
 function initials(name: string, symbol: string): string {
@@ -77,15 +42,17 @@ function bgColour(symbol: string): string {
 }
 
 export function CompanyLogo({
-  symbol, name, size = 28,
+  symbol, name, size = 28, exchange,
 }: {
   symbol: string;
   name?: string;
   size?: number;
+  exchange?: string;
 }) {
   const [failed, setFailed] = useState(false);
-  // Reset on symbol change
-  useEffect(() => { setFailed(false); }, [symbol]);
+  const cleanSymbol = logoTicker(symbol);
+
+  useEffect(() => { setFailed(false); }, [symbol, exchange]);
 
   if (failed) {
     return (
@@ -93,23 +60,24 @@ export function CompanyLogo({
         className="company-logo company-logo-fallback"
         style={{
           width: size, height: size,
-          background: bgColour(symbol),
+          background: bgColour(cleanSymbol),
           fontSize: Math.round(size * 0.42),
         }}
         aria-hidden
       >
-        {initials(name ?? "", symbol)}
+        {initials(name ?? "", cleanSymbol)}
       </div>
     );
   }
   return (
     <img
       className="company-logo"
-      src={logoUrl(symbol)}
+      src={logoUrl(symbol, exchange)}
       alt=""
       width={size}
       height={size}
       loading="lazy"
+      decoding="async"
       onError={() => setFailed(true)}
     />
   );

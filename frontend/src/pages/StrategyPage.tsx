@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import {
+  getMcxIcomdex,
   getQuote,
   getUsdInrRate,
   listInstrumentGroups,
@@ -23,6 +24,7 @@ import {
   type AssetClassId,
   type AggregateResult,
   type EngineSummary,
+  type IcomdexEntry,
   type InstrumentGroup,
   type NseSymbolRow,
   type PerStrategyResult,
@@ -63,8 +65,8 @@ const FALLBACK_INSTRUMENT_GROUPS: InstrumentGroup[] = [
   {
     id: "commodity",
     label: "Commodities",
-    description: "Gold, silver, copper, crude oil, and natural gas.",
-    source: "yfinance futures",
+    description: "MCX gold, silver, copper, crude oil, and natural gas.",
+    source: "MCX India via mcxlib",
     count: 5,
   },
   {
@@ -115,9 +117,15 @@ const ASSET_IMAGE: Partial<Record<AssetClassId, string>> = {
 
 const INSTRUMENT_IMAGE: Record<string, string> = {
   "BTC-USD": "/bitcoin-btc-logo.png",
-  "GC=F": "/gold.jpg",
-  "SI=F": "/silver.png",
-  "CL=F": "/oil.png",
+  GOLD: "/gold.jpg",
+  GOLDM: "/gold.jpg",
+  GOLDGUINEA: "/gold.jpg",
+  GOLDPETAL: "/gold.jpg",
+  SILVER: "/silver.png",
+  SILVERM: "/silver.png",
+  SILVERMIC: "/silver.png",
+  CRUDEOIL: "/oil.png",
+  CRUDEOILM: "/oil.png",
 };
 
 type Roundel = { bg: string; fg: string; letter: string };
@@ -128,8 +136,25 @@ const INSTRUMENT_ROUNDEL: Record<string, Roundel> = {
   "XRP-USD": { bg: "#23292F", fg: "#ffffff", letter: "X" },
   "ADA-USD": { bg: "#0033AD", fg: "#ffffff", letter: "A" },
   "DOGE-USD": { bg: "#C2A633", fg: "#ffffff", letter: "Ð" },
-  "HG=F": { bg: "#B87333", fg: "#ffffff", letter: "Cu" },
-  "NG=F": { bg: "#4A90E2", fg: "#ffffff", letter: "NG" },
+  COPPER: { bg: "#B87333", fg: "#ffffff", letter: "Cu" },
+  NATURALGAS: { bg: "#4A90E2", fg: "#ffffff", letter: "NG" },
+  NATGASMINI: { bg: "#4A90E2", fg: "#ffffff", letter: "ng" },
+};
+
+const ICOMDEX_KEY_FOR_SYMBOL: Record<string, string> = {
+  GOLD: "GOLD",
+  GOLDM: "GOLD",
+  GOLDGUINEA: "GOLD",
+  GOLDPETAL: "GOLD",
+  GOLDTEN: "GOLD",
+  SILVER: "SILVER",
+  SILVERM: "SILVER",
+  SILVERMIC: "SILVER",
+  COPPER: "COPPER",
+  CRUDEOIL: "CRUDEOIL",
+  CRUDEOILM: "CRUDEOIL",
+  NATURALGAS: "NATURALGAS",
+  NATGASMINI: "NATURALGAS",
 };
 
 type CommodityUnitOption = {
@@ -169,7 +194,6 @@ type CommodityConversion = {
 
 const TROY_OUNCE_GRAMS = 31.1034768;
 const AVOIRDUPOIS_OUNCE_GRAMS = 28.349523125;
-const POUND_GRAMS = 453.59237;
 const BARREL_LITERS = 158.987294928;
 const MMBTU_KWH = 293.07107;
 
@@ -213,38 +237,50 @@ const GAS_UNIT_OPTIONS: CommodityConversionSpec["options"] = [
   { id: "custom", label: "Custom", suffix: "custom", quoteUnitsPerDisplayUnit: 1, custom: true },
 ];
 
+const CRUDE_SPEC: CommodityConversionSpec = {
+  quoteUnit: "barrel",
+  defaultUnitId: "liter",
+  options: CRUDE_UNIT_OPTIONS,
+  custom: {
+    label: "Custom volume",
+    inputSuffix: "L",
+    defaultAmount: 1,
+    min: 0.01,
+    step: 0.01,
+    toQuoteUnits: (amount) => amount / BARREL_LITERS,
+    suffix: (amount) => `${formatCompactAmount(amount)}L`,
+  },
+};
+
+const GAS_SPEC: CommodityConversionSpec = {
+  quoteUnit: "MMBtu",
+  defaultUnitId: "mmbtu",
+  options: GAS_UNIT_OPTIONS,
+  custom: {
+    label: "Custom energy",
+    inputSuffix: "kWh",
+    defaultAmount: 1,
+    min: 0.01,
+    step: 0.01,
+    toQuoteUnits: (amount) => amount / MMBTU_KWH,
+    suffix: (amount) => `${formatCompactAmount(amount)}kWh`,
+  },
+};
+
 const COMMODITY_CONVERSIONS: Record<string, CommodityConversionSpec> = {
-  "GC=F": massCommoditySpec("troy oz", TROY_OUNCE_GRAMS),
-  "SI=F": massCommoditySpec("troy oz", TROY_OUNCE_GRAMS),
-  "HG=F": massCommoditySpec("lb", POUND_GRAMS, AVOIRDUPOIS_OUNCE_GRAMS),
-  "CL=F": {
-    quoteUnit: "barrel",
-    defaultUnitId: "liter",
-    options: CRUDE_UNIT_OPTIONS,
-    custom: {
-      label: "Custom volume",
-      inputSuffix: "L",
-      defaultAmount: 1,
-      min: 0.01,
-      step: 0.01,
-      toQuoteUnits: (amount) => amount / BARREL_LITERS,
-      suffix: (amount) => `${formatCompactAmount(amount)}L`,
-    },
-  },
-  "NG=F": {
-    quoteUnit: "MMBtu",
-    defaultUnitId: "mmbtu",
-    options: GAS_UNIT_OPTIONS,
-    custom: {
-      label: "Custom energy",
-      inputSuffix: "kWh",
-      defaultAmount: 1,
-      min: 0.01,
-      step: 0.01,
-      toQuoteUnits: (amount) => amount / MMBTU_KWH,
-      suffix: (amount) => `${formatCompactAmount(amount)}kWh`,
-    },
-  },
+  GOLD: massCommoditySpec("10g", 10),
+  GOLDM: massCommoditySpec("10g", 10),
+  GOLDTEN: massCommoditySpec("10g", 10),
+  GOLDGUINEA: massCommoditySpec("8g", 8),
+  GOLDPETAL: massCommoditySpec("g", 1),
+  SILVER: massCommoditySpec("kg", 1000),
+  SILVERM: massCommoditySpec("kg", 1000),
+  SILVERMIC: massCommoditySpec("kg", 1000),
+  COPPER: massCommoditySpec("kg", 1000, AVOIRDUPOIS_OUNCE_GRAMS),
+  CRUDEOIL: CRUDE_SPEC,
+  CRUDEOILM: CRUDE_SPEC,
+  NATURALGAS: GAS_SPEC,
+  NATGASMINI: GAS_SPEC,
 };
 
 function RoundelLogo({ spec, size }: { spec: Roundel; size: number }) {
@@ -265,7 +301,10 @@ function formatCompactAmount(value: number) {
 }
 
 function defaultCurrencyForAsset(assetType: AssetClassId | null): MoneyCurrency {
-  return assetType === "equity" || assetType === "mutual_fund" || assetType === "indian_index"
+  return assetType === "equity"
+    || assetType === "commodity"
+    || assetType === "mutual_fund"
+    || assetType === "indian_index"
     ? "INR"
     : "USD";
 }
@@ -427,7 +466,14 @@ function InstrumentLogo({
 }) {
   const assetType = instrument.asset_type ?? "equity";
   if (assetType === "equity") {
-    return <CompanyLogo symbol={instrument.symbol} name={instrument.name} size={size} />;
+    return (
+      <CompanyLogo
+        symbol={instrument.yahoo_symbol || instrument.symbol}
+        name={instrument.name}
+        exchange={instrument.exchange}
+        size={size}
+      />
+    );
   }
   const imgSrc = INSTRUMENT_IMAGE[instrument.yahoo_symbol];
   if (imgSrc) {
@@ -548,9 +594,57 @@ function EngineSummaryCard({ summary }: { summary: EngineSummary }) {
   );
 }
 
+function FuturesContractStrip({
+  quote,
+  icomdex,
+  displayCurrency,
+  nativeCurrency,
+  usdInrRate,
+}: {
+  quote: Quote;
+  icomdex: IcomdexEntry | null;
+  displayCurrency: MoneyCurrency;
+  nativeCurrency: MoneyCurrency;
+  usdInrRate: number | null;
+}) {
+  const hasContract = quote.expiry || quote.unit || quote.instrument;
+  const hasOi = quote.open_interest != null && Number.isFinite(quote.open_interest);
+  if (!hasContract && !hasOi && !icomdex) return null;
+  const pieces: string[] = [];
+  if (quote.expiry) pieces.push(quote.expiry);
+  if (quote.instrument) pieces.push(quote.instrument);
+  if (quote.unit) pieces.push(quote.unit);
+  return (
+    <div className="futures-contract-strip">
+      {hasContract && (
+        <div className="futures-contract-cell">
+          <label>Contract</label>
+          <span>{pieces.join(" · ")}</span>
+        </div>
+      )}
+      {hasOi && (
+        <div className="futures-contract-cell">
+          <label>OI</label>
+          <span>{Math.round(quote.open_interest!).toLocaleString("en-IN")}</span>
+        </div>
+      )}
+      {icomdex && (
+        <div className="futures-contract-cell">
+          <label>{icomdex.display_name || "iCOMDEX"}</label>
+          <span className={icomdex.percent_change >= 0 ? "pos" : "neg"}>
+            {formatPrice(icomdex.ltp, displayCurrency, nativeCurrency, usdInrRate)}
+            <span className="muted"> ({icomdex.percent_change.toFixed(2)}%)</span>
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function InstrumentCard({
   symbol,
   quote,
+  icomdex,
   displayCurrency,
   usdInrRate,
   commodityConversion,
@@ -558,6 +652,7 @@ function InstrumentCard({
 }: {
   symbol: NseSymbolRow;
   quote: Quote | null;
+  icomdex: IcomdexEntry | null;
   displayCurrency: MoneyCurrency;
   usdInrRate: number | null;
   commodityConversion: CommodityConversion | null;
@@ -602,6 +697,15 @@ function InstrumentCard({
         )}
       </div>
       {quote && (
+        <FuturesContractStrip
+          quote={quote}
+          icomdex={icomdex}
+          displayCurrency={displayCurrency}
+          nativeCurrency={nativeCurrency}
+          usdInrRate={usdInrRate}
+        />
+      )}
+      {quote && (
         <div className="company-stats">
           <div>
             <label>High</label>
@@ -630,7 +734,13 @@ function InstrumentCard({
             </span>
           </div>
           <div><label>Vol</label><span>{Math.round(quote.volume).toLocaleString("en-IN")}</span></div>
-          <div><label>As of</label><span>{quote.as_of}</span></div>
+          <div>
+            <label>As of</label>
+            <span>
+              {quote.as_of}
+              {quote.as_of_estimated ? <span className="muted"> (est.)</span> : null}
+            </span>
+          </div>
         </div>
       )}
     </div>
@@ -797,6 +907,7 @@ export function StrategyPage() {
   const [usdInrRate, setUsdInrRate] = useState<number | null>(null);
   const [commodityUnitId, setCommodityUnitId] = useState("native");
   const [customCommodityAmount, setCustomCommodityAmount] = useState(10);
+  const [icomdex, setIcomdex] = useState<Record<string, IcomdexEntry> | null>(null);
 
   const [aggregateResult, setAggregateResult] = useState<{
     aggregate: AggregateResult; per_strategy: PerStrategyResult[];
@@ -828,6 +939,12 @@ export function StrategyPage() {
     }, 180);
     return () => clearTimeout(t);
   }, [assetType, query]);
+
+  useEffect(() => {
+    if (assetType !== "commodity") return;
+    if (icomdex) return;
+    getMcxIcomdex().then((data) => { if (data) setIcomdex(data); }).catch(() => {});
+  }, [assetType, icomdex]);
 
   useEffect(() => {
     if (!selected) { setQuote(null); return; }
@@ -948,6 +1065,11 @@ export function StrategyPage() {
     />
   ) : null;
 
+  const icomdexKey = selected?.yahoo_symbol
+    ? ICOMDEX_KEY_FOR_SYMBOL[selected.yahoo_symbol] ?? null
+    : null;
+  const selectedIcomdex = icomdexKey && icomdex ? icomdex[icomdexKey] ?? null : null;
+
   const headerBlock = (
     <div className="strategy-workspace-head">
       <div className="strategy-workspace-head-left">
@@ -1063,6 +1185,7 @@ export function StrategyPage() {
             <InstrumentCard
               symbol={selected}
               quote={quote}
+              icomdex={selectedIcomdex}
               displayCurrency={displayCurrency}
               usdInrRate={usdInrRate}
               commodityConversion={commodityConversion}

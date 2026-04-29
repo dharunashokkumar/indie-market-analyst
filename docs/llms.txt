@@ -10,7 +10,7 @@ This project builds a hallucination-resistant analyst for the Indian stock marke
 - License: MIT
 - Language: Python 3.12+ (backend), React + TypeScript (frontend)
 - LLM provider: OpenRouter (free tier by default)
-- Data: yfinance, NSE/BSE public endpoints, Google Finance scrape — all free
+- Data: yfinance, MCX India via mcxlib, NSE/BSE public endpoints, Google Finance scrape — all free
 - Backtest engine: pure pandas/numpy with Indian cost model (STT, stamp duty, brokerage)
 
 ## Docs

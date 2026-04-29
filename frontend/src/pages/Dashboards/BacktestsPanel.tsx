@@ -14,6 +14,24 @@ import {
   formatNum,
   formatPct,
 } from "./_runDetail";
+import { CompanyLogo } from "../../components/CompanyLogo";
+
+function cleanSymbol(symbol: string): string {
+  return symbol.replace(/\.NS$/i, "").replace(/\.BO$/i, "").replace(/^\^/, "");
+}
+
+function SymbolWithLogo({ symbol, size = 22 }: { symbol: string; size?: number }) {
+  return (
+    <div className="run-symbol">
+      <CompanyLogo
+        symbol={symbol}
+        exchange={symbol.toUpperCase().endsWith(".BO") ? "BSE" : "NSE"}
+        size={size}
+      />
+      <span>{cleanSymbol(symbol)}</span>
+    </div>
+  );
+}
 
 export function BacktestsPanel() {
   const [runs, setRuns] = useState<RunRow[]>([]);
@@ -76,7 +94,9 @@ export function BacktestsPanel() {
                   className={selectedId === r.id ? "selected" : ""}
                   onClick={() => setSelectedId(r.id)}
                 >
-                  <td>{s.symbol ?? r.id.slice(0, 8)}</td>
+                  <td>
+                    {s.symbol ? <SymbolWithLogo symbol={s.symbol} /> : r.id.slice(0, 8)}
+                  </td>
                   <td>{s.strategy ?? "—"}</td>
                   <td>{s.period ?? "—"}</td>
                   <td className="num">{formatNum(s.sharpe)}</td>
@@ -92,10 +112,19 @@ export function BacktestsPanel() {
       {selected && (
         <div className="backtests-detail">
           <div className="backtests-detail-header">
-            <div>
-              <h3>{selected.summary?.symbol ?? selected.id.slice(0, 8)}</h3>
-              <div className="muted">
-                {selected.summary?.strategy ?? "—"} • {selected.summary?.period ?? "—"}
+            <div className="backtests-title">
+              {selected.summary?.symbol && (
+                <CompanyLogo
+                  symbol={selected.summary.symbol}
+                  exchange={selected.summary.symbol.toUpperCase().endsWith(".BO") ? "BSE" : "NSE"}
+                  size={34}
+                />
+              )}
+              <div>
+                <h3>{selected.summary?.symbol ? cleanSymbol(selected.summary.symbol) : selected.id.slice(0, 8)}</h3>
+                <div className="muted">
+                  {selected.summary?.strategy ?? "—"} • {selected.summary?.period ?? "—"}
+                </div>
               </div>
             </div>
             {blob && (

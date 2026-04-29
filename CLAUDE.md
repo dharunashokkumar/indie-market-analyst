@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-**INDIE_MARKET_ANALYST** — a tool-first, swarm-orchestrated Indian-market analyst built on the `openai-agents` SDK (PyPI) with OpenRouter as the LLM provider. Free data sources only (yfinance, Google Finance scrape, NSE/BSE public endpoints).
+**INDIE_MARKET_ANALYST** — a tool-first, swarm-orchestrated Indian-market analyst built on the `openai-agents` SDK (PyPI) with OpenRouter as the LLM provider. Free data sources only (yfinance, mcxlib/MCX India, Google Finance scrape, NSE/BSE public endpoints).
 
 ## Commands
 
