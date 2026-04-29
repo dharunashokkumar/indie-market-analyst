@@ -306,6 +306,27 @@ export type MarketQuote = {
   sparkline: { date: string; value: number }[];
 };
 
+export type MarketNewsItem = {
+  title: string;
+  link: string;
+  published_utc: string | null;
+  summary: string;
+  source: string;
+  sentiment: "bull" | "bear" | "neutral" | string;
+};
+
+export type MarketNewsDigest = {
+  items: MarketNewsItem[];
+  total: number;
+  bullish: number;
+  bearish: number;
+  neutral: number;
+  overall_sentiment: "bullish" | "bearish" | "mixed" | "neutral" | string;
+  sentiment_score: number;
+  as_of_utc: string;
+  sources_used: string[];
+};
+
 export type MarketOverview = {
   indices: MarketQuote[];
   watchlist: MarketQuote[];
@@ -314,6 +335,8 @@ export type MarketOverview = {
   top_gainers: MarketQuote[];
   top_losers: MarketQuote[];
   sectors: MarketQuote[];
+  news: MarketNewsDigest;
+  universe?: string;
   breadth: {
     advances: number;
     declines: number;

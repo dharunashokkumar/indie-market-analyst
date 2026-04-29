@@ -3,13 +3,21 @@ import {
   Activity,
   BarChart3,
   Clock3,
+  ExternalLink,
+  Newspaper,
+  Radio,
   RefreshCw,
   Star,
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
 import { CompanyLogo } from "../../components/CompanyLogo";
-import { getMarketOverview, type MarketOverview, type MarketQuote } from "../../lib/api";
+import {
+  getMarketOverview,
+  type MarketNewsDigest,
+  type MarketOverview,
+  type MarketQuote,
+} from "../../lib/api";
 
 function cleanSymbol(symbol: string): string {
   return symbol.replace(/\.NS$/i, "").replace(/^\^/, "");
@@ -30,7 +38,9 @@ function formatPrice(q: MarketQuote): string {
 }
 
 function formatAbsChange(q: MarketQuote): string {
-  if (q.last_price === null || q.prev_close === null) return "—";
+  if (q.last_price === null || q.last_price === undefined || q.prev_close === null || q.prev_close === undefined) {
+    return "—";
+  }
   const value = q.last_price - q.prev_close;
   const sign = value > 0 ? "+" : "";
   return `${sign}${formatNumber(value, 2)}`;
@@ -67,6 +77,16 @@ function formatUpdated(asOf: string | null | undefined): string {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+function formatSource(source: string): string {
+  return source
+    .replace(/^google_news_/, "Google News ")
+    .replace(/^moneycontrol_/, "Moneycontrol ")
+    .replace(/^livemint_/, "Livemint ")
+    .replace(/^et_/, "ET ")
+    .replace(/^bs_/, "Business Standard ")
+    .replace(/_/g, " ");
 }
 
 function changeClass(v: number | null | undefined): string {
@@ -109,19 +129,40 @@ function ChangeBadge({ value }: { value: number | null | undefined }) {
   );
 }
 
-function IndexCard({ quote }: { quote: MarketQuote }) {
+function RangeTrack({ quote }: { quote: MarketQuote }) {
+  const low = quote.day_low;
+  const high = quote.day_high;
+  const last = quote.last_price;
+  const span = low !== null && high !== null && low !== undefined && high !== undefined ? high - low : 0;
+  const position = span > 0 && last !== null && last !== undefined
+    ? Math.max(0, Math.min(100, ((last - low!) / span) * 100))
+    : 50;
   return (
-    <article className={`market-index-card ${changeClass(quote.change_pct)}`}>
+    <div className="market-range">
+      <div className="market-range-track">
+        <span style={{ left: `${position}%` }} />
+      </div>
+      <div className="market-range-labels">
+        <span>{formatNumber(low, 0)}</span>
+        <span>{formatNumber(high, 0)}</span>
+      </div>
+    </div>
+  );
+}
+
+function IndexCard({ quote, feature = false }: { quote: MarketQuote; feature?: boolean }) {
+  return (
+    <article className={`market-index-card ${changeClass(quote.change_pct)}${feature ? " feature" : ""}`}>
       <div className="market-index-card-top">
         <div>
           <div className="market-index-name">{quote.name}</div>
-          <div className="market-index-exchange">{quote.exchange}</div>
+          <div className="market-index-exchange">{quote.exchange} live</div>
         </div>
         <ChangeBadge value={quote.change_pct} />
       </div>
       <div className="market-index-price">{formatPrice(quote)}</div>
-      <div className="market-index-delta">{formatAbsChange(quote)}</div>
-      <Sparkline quote={quote} />
+      <div className="market-index-delta">{formatAbsChange(quote)} today</div>
+      {quote.sparkline?.length >= 3 ? <Sparkline quote={quote} /> : <RangeTrack quote={quote} />}
     </article>
   );
 }
@@ -215,7 +256,7 @@ function WatchlistPanel({ rows }: { rows: MarketQuote[] }) {
       <div className="market-panel-header">
         <div>
           <h3><Star size={15} />Watchlist</h3>
-          <p>Large-cap names</p>
+          <p>Large-cap desk names</p>
         </div>
       </div>
       <div className="market-quote-list">
@@ -234,12 +275,12 @@ function SectorBoard({ rows }: { rows: MarketQuote[] }) {
     <section className="market-panel market-sector-panel">
       <div className="market-panel-header">
         <div>
-          <h3><BarChart3 size={15} />Sector Moves</h3>
-          <p>Nifty sector indices</p>
+          <h3><BarChart3 size={15} />Sector Tape</h3>
+          <p>NSE sector indices</p>
         </div>
       </div>
       <div className="market-sector-list">
-        {rows.slice(0, 8).map((row) => {
+        {rows.slice(0, 9).map((row) => {
           const width = `${Math.max(6, (Math.abs(row.change_pct ?? 0) / maxAbs) * 100)}%`;
           return (
             <div key={row.symbol} className="market-sector-row">
@@ -299,6 +340,86 @@ function BreadthPanel({ overview }: { overview: MarketOverview }) {
   );
 }
 
+function DispatchPanel({ overview }: { overview: MarketOverview }) {
+  const { advances, declines, total } = overview.breadth;
+  const leader = overview.top_gainers[0];
+  const laggard = overview.top_losers[0];
+  const hotSector = overview.sectors[0];
+  const coldSector = overview.sectors[overview.sectors.length - 1];
+  const breadthSkew = total ? Math.round(((advances - declines) / total) * 100) : 0;
+  const deskLine = advances > declines
+    ? "The tape is carrying a positive bias, with leadership showing up before the broader list fully confirms it."
+    : declines > advances
+      ? "Sellers have the upper hand, so the cleaner work is in relative strength and names refusing the drawdown."
+      : "The tape is balanced, with the better read coming from sector rotation and high-volume breakouts.";
+
+  return (
+    <section className="market-panel market-dispatch-panel">
+      <div className="market-dispatch-copy">
+        <span className="market-dispatch-kicker">Desk note</span>
+        <h3>{deskLine}</h3>
+      </div>
+      <div className="market-dispatch-grid">
+        <div>
+          <span>Breadth skew</span>
+          <strong className={breadthSkew >= 0 ? "is-up" : "is-down"}>{breadthSkew > 0 ? "+" : ""}{breadthSkew}%</strong>
+        </div>
+        <div>
+          <span>Leader</span>
+          <strong>{leader ? cleanSymbol(leader.symbol) : "—"}</strong>
+          <em className={leader ? changeClass(leader.change_pct) : ""}>{leader ? formatPct(leader.change_pct) : "—"}</em>
+        </div>
+        <div>
+          <span>Pressure</span>
+          <strong>{laggard ? cleanSymbol(laggard.symbol) : "—"}</strong>
+          <em className={laggard ? changeClass(laggard.change_pct) : ""}>{laggard ? formatPct(laggard.change_pct) : "—"}</em>
+        </div>
+        <div>
+          <span>Rotation</span>
+          <strong>{hotSector ? hotSector.name.replace("Nifty ", "") : "—"}</strong>
+          <em className={coldSector ? changeClass(coldSector.change_pct) : ""}>
+            {coldSector ? `${coldSector.name.replace("Nifty ", "")} weak` : "—"}
+          </em>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function NewsPanel({ news }: { news: MarketNewsDigest | undefined }) {
+  const items = news?.items ?? [];
+  const mood = news?.overall_sentiment ?? "neutral";
+  return (
+    <section className="market-panel market-news-panel">
+      <div className="market-panel-header">
+        <div>
+          <h3><Newspaper size={15} />Headlines</h3>
+          <p>{mood} RSS read · {news?.total ?? 0} fresh items</p>
+        </div>
+      </div>
+      <div className="market-news-list">
+        {items.slice(0, 7).map((item, index) => (
+          <a
+            key={`${item.link}-${index}`}
+            className="market-news-item"
+            href={item.link}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <span className={`market-news-dot is-${item.sentiment}`} />
+            <span className="market-news-copy">
+              <strong>{item.title}</strong>
+              <em>{formatSource(item.source)} · {formatUpdated(item.published_utc)}</em>
+            </span>
+            <ExternalLink size={13} />
+          </a>
+        ))}
+        {items.length === 0 && <div className="market-empty-row">No headlines available.</div>}
+      </div>
+    </section>
+  );
+}
+
 function LoadingPanel() {
   return (
     <div className="market-loading-grid">
@@ -336,11 +457,19 @@ export function MarketOverviewPanel() {
   }, [refresh]);
 
   const status = useMemo(() => {
-    if (!overview) return "Loading market data";
+    if (!overview) return "Loading NSE tape";
     const { advances, declines } = overview.breadth;
-    if (advances > declines) return "Positive sentiment";
-    if (declines > advances) return "Cautious sentiment";
-    return "Balanced sentiment";
+    if (advances > declines) return "Positive tape";
+    if (declines > advances) return "Defensive tape";
+    return "Balanced tape";
+  }, [overview]);
+
+  const heroDeck = useMemo(() => {
+    if (!overview) return "NSE prices, movers, breadth, and RSS headlines in one live desk.";
+    const headline = overview.news?.items?.[0]?.title;
+    if (headline) return headline;
+    const source = overview.universe ? `${overview.universe} universe` : "NSE universe";
+    return `${source} with ${overview.breadth.advances} advances and ${overview.breadth.declines} declines.`;
   }, [overview]);
 
   if (!overview && loading) {
@@ -348,8 +477,9 @@ export function MarketOverviewPanel() {
       <div className="market-overview">
         <div className="market-overview-top">
           <div>
-            <div className="market-eyebrow">India Markets</div>
-            <h2>Market Dashboard</h2>
+            <div className="market-eyebrow">NSE Live Desk</div>
+            <h2>India Market Dispatch</h2>
+            <p>{heroDeck}</p>
           </div>
           <button type="button" className="market-refresh-btn" disabled>
             <RefreshCw size={15} className="spinning" />
@@ -366,8 +496,9 @@ export function MarketOverviewPanel() {
       <div className="market-overview">
         <div className="market-overview-top">
           <div>
-            <div className="market-eyebrow">India Markets</div>
-            <h2>Market Dashboard</h2>
+            <div className="market-eyebrow">NSE Live Desk</div>
+            <h2>India Market Dispatch</h2>
+            <p>{heroDeck}</p>
           </div>
           <button type="button" className="market-refresh-btn" onClick={refresh} disabled={loading}>
             <RefreshCw size={15} className={loading ? "spinning" : ""} />
@@ -381,10 +512,15 @@ export function MarketOverviewPanel() {
 
   return (
     <div className="market-overview">
-      <div className="market-overview-top">
-        <div>
-          <div className="market-eyebrow">India Markets</div>
-          <h2>Market Dashboard</h2>
+      <section className="market-overview-top">
+        <div className="market-hero-copy">
+          <div className="market-eyebrow">NSE Live Desk</div>
+          <h2>India Market Dispatch</h2>
+          <p>{heroDeck}</p>
+          <div className="market-hero-footnotes">
+            <span><Radio size={13} />{overview.universe || "NSE universe"}</span>
+            <span>{overview.source}</span>
+          </div>
         </div>
         <div className="market-top-actions">
           <div className="market-status-pill">
@@ -400,53 +536,57 @@ export function MarketOverviewPanel() {
             Refresh
           </button>
         </div>
-      </div>
+      </section>
 
       {error && <div className="panel-status error">{error}</div>}
 
       <section className="market-index-grid">
-        {overview.indices.map((quote) => (
-          <IndexCard key={quote.symbol} quote={quote} />
+        {overview.indices.map((quote, index) => (
+          <IndexCard key={quote.symbol} quote={quote} feature={index === 0} />
         ))}
       </section>
 
       <div className="market-layout">
         <div className="market-main-column">
+          <DispatchPanel overview={overview} />
           <div className="market-summary-grid">
             <BreadthPanel overview={overview} />
             <SectorBoard rows={overview.sectors} />
           </div>
+          <div className="market-mover-grid">
+            <MarketPanel
+              title="Today Gainers"
+              subtitle="Top NSE movers by day change"
+              icon={<TrendingUp size={15} />}
+              rows={overview.top_gainers}
+              metric="price"
+            />
+            <MarketPanel
+              title="Today Losers"
+              subtitle="Largest NSE downside moves"
+              icon={<TrendingDown size={15} />}
+              rows={overview.top_losers}
+              metric="price"
+            />
+          </div>
           <MarketPanel
             title="Most Traded"
-            subtitle="Highest turnover in the tracked large-cap set"
+            subtitle="Highest traded value in the NSE universe"
             icon={<Activity size={15} />}
             rows={overview.most_traded}
             metric="turnover"
           />
-          <MarketPanel
-            title="Top Intraday"
-            subtitle="Best performers today"
-            icon={<TrendingUp size={15} />}
-            rows={overview.top_gainers}
-            metric="price"
-          />
         </div>
 
         <aside className="market-side-column">
+          <NewsPanel news={overview.news} />
           <WatchlistPanel rows={overview.watchlist} />
           <MarketPanel
             title="Top Volume"
-            subtitle="Most shares exchanged"
+            subtitle="Most shares exchanged today"
             icon={<BarChart3 size={15} />}
             rows={overview.top_volume}
             metric="volume"
-          />
-          <MarketPanel
-            title="Weak Today"
-            subtitle="Largest downside moves"
-            icon={<TrendingDown size={15} />}
-            rows={overview.top_losers}
-            metric="price"
           />
         </aside>
       </div>

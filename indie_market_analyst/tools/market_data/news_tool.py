@@ -33,6 +33,11 @@ _RSS_SOURCES: dict[str, str] = {
     "et_markets": "https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms",
     "livemint_markets": "https://www.livemint.com/rss/markets",
     "bs_markets": "https://www.business-standard.com/rss/markets-106.rss",
+    "google_news_markets": (
+        "https://news.google.com/rss/search?"
+        "q=India%20stock%20market%20OR%20Nifty%20OR%20Sensex%20when%3A1d"
+        "&hl=en-IN&gl=IN&ceid=IN%3Aen"
+    ),
 }
 
 _BULL = {
@@ -246,18 +251,8 @@ def _sort_recent(items: list[NewsItem]) -> list[NewsItem]:
     return sorted(items, key=ts, reverse=True)
 
 
-@function_tool
-def get_market_news(topic: str = "", limit: int = 12) -> NewsDigest:
-    """Fetch recent Indian-market headlines with aggregate sentiment.
-
-    Args:
-        topic: optional filter keyword (e.g. ``"nifty"``, ``"reliance"``,
-            ``"rbi"``). Empty string returns the general markets feed.
-        limit: max items to return (1–30).
-
-    Returns a NewsDigest with per-item bull/bear/neutral labels plus an
-    aggregate ``overall_sentiment`` computed deterministically from counts.
-    """
+def fetch_market_news(topic: str = "", limit: int = 12) -> NewsDigest:
+    """Fetch recent Indian-market headlines with aggregate sentiment."""
     limit = max(1, min(int(limit), 30))
     topic_q = topic.strip() or None
     collected: list[NewsItem] = []
@@ -325,6 +320,21 @@ def get_market_news(topic: str = "", limit: int = 12) -> NewsDigest:
         as_of_utc=datetime.now(UTC).isoformat(),
         sources_used=sources_used,
     )
+
+
+@function_tool
+def get_market_news(topic: str = "", limit: int = 12) -> NewsDigest:
+    """Fetch recent Indian-market headlines with aggregate sentiment.
+
+    Args:
+        topic: optional filter keyword (e.g. ``"nifty"``, ``"reliance"``,
+            ``"rbi"``). Empty string returns the general markets feed.
+        limit: max items to return (1–30).
+
+    Returns a NewsDigest with per-item bull/bear/neutral labels plus an
+    aggregate ``overall_sentiment`` computed deterministically from counts.
+    """
+    return fetch_market_news(topic=topic, limit=limit)
 
 
 TOOLS = [get_market_news]

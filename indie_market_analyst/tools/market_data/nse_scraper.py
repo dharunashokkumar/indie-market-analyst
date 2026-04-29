@@ -12,6 +12,7 @@ import httpx
 from agents import function_tool
 from pydantic import BaseModel
 
+_BASE_URL = "https://www.nseindia.com"
 _HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
     "Accept": "application/json, text/plain, */*",
@@ -30,6 +31,34 @@ def _client() -> httpx.Client:
     return c
 
 
+def _get_json(path: str, params: dict[str, str] | None = None) -> dict[str, Any]:
+    c = _client()
+    try:
+        r = c.get(f"{_BASE_URL}{path}", params=params)
+        r.raise_for_status()
+        data = r.json()
+    finally:
+        c.close()
+    return data if isinstance(data, dict) else {}
+
+
+def fetch_all_indices() -> list[dict[str, Any]]:
+    """Raw NSE all-indices payload rows."""
+    data = _get_json("/api/allIndices")
+    rows = data.get("data", [])
+    return rows if isinstance(rows, list) else []
+
+
+def fetch_index_constituents(index: str = "NIFTY 50") -> dict[str, Any]:
+    """Raw NSE equity-stockIndices payload for an index/sector basket."""
+    return _get_json("/api/equity-stockIndices", params={"index": index})
+
+
+def fetch_index_chart(index: str = "NIFTY 50") -> dict[str, Any]:
+    """Raw NSE intraday chart payload for an index."""
+    return _get_json("/api/chart-databyindex", params={"index": index, "indices": "true"})
+
+
 class IndexSnapshot(BaseModel):
     index: str
     last: float
@@ -42,13 +71,7 @@ class IndexSnapshot(BaseModel):
 @function_tool
 def get_index_snapshot(index: str = "NIFTY 50") -> IndexSnapshot:
     """Fetch a live index snapshot from NSE (e.g. ``NIFTY 50``, ``NIFTY BANK``)."""
-    with _client() as c:
-        r = c.get(
-            "https://www.nseindia.com/api/allIndices",
-        )
-        r.raise_for_status()
-        data: dict[str, Any] = r.json()
-    for row in data.get("data", []):
+    for row in fetch_all_indices():
         if row.get("index", "").upper() == index.upper():
             return IndexSnapshot(
                 index=row["index"],
@@ -72,10 +95,7 @@ class AdvanceDecline(BaseModel):
 @function_tool
 def get_advance_decline() -> AdvanceDecline:
     """Return today's NSE advance/decline breadth (uses the marketStatus endpoint)."""
-    with _client() as c:
-        r = c.get("https://www.nseindia.com/api/market-data-pre-open?key=NIFTY")
-        r.raise_for_status()
-        data = r.json()
+    data = _get_json("/api/market-data-pre-open", params={"key": "NIFTY"})
     adv = dec = unch = 0
     for row in data.get("data", []):
         ch = row.get("metadata", {}).get("change")
