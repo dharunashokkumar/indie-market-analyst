@@ -25,7 +25,7 @@
     <path d="M25 40 L35 50 L55 30" stroke="white" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
     
     <text x="0" y="140" font-family="Source Serif 4, serif" font-size="64" font-weight="700" fill="#e6ebf2">indie-market-analyst</text>
-    <text x="0" y="200" font-family="Inter, sans-serif" font-size="28" fill="#94a3b8">The open-source AI research analyst for Indian stock markets.</text>
+    <text x="0" y="200" font-family="Inter, sans-serif" font-size="28" fill="#94a3b8">Intraday scans, dashboards, backtests, and optional AI chat.</text>
     
     <g transform="translate(0, 260)">
       <rect x="0" y="0" width="200" height="50" rx="8" fill="#6aa7ff" />

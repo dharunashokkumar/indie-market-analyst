@@ -1,28 +1,42 @@
 # indie-market-analyst
 
-> Open-source, tool-first, swarm-orchestrated AI research analyst for Indian markets (NSE/BSE). Free data sources, OpenRouter models, deterministic backtester.
+> Open-source Indian-market analysis toolkit with deterministic intraday scanning, dashboards, backtesting, market data APIs, and optional AI-assisted chat.
 
-This project builds a hallucination-resistant analyst for the Indian stock market. Multiple specialist agents (collector, verifier, calculator, writer) coordinate via the OpenAI Agents SDK; every inter-agent handoff carries a strict Pydantic schema, and an output guardrail rejects free-floating numeric claims that weren't produced by a tool call.
+indie-market-analyst is a local-first full-stack app for NSE/BSE workflows. The core product includes an intraday scanner, strategy workbench, market dashboards, and a deterministic backtest engine. The AI chat is one feature: it uses OpenRouter-backed agents, source-aware tools, strict Pydantic handoffs, and guardrails for numeric claims.
 
 ## Key facts
 
 - Repository: https://github.com/dharunashokkumar/indie-market-analyst
 - License: MIT
-- Language: Python 3.12+ (backend), React + TypeScript (frontend)
-- LLM provider: OpenRouter (free tier by default)
-- Data: yfinance, MCX India via mcxlib, NSE/BSE public endpoints, Google Finance scrape — all free
-- Backtest engine: pure pandas/numpy with Indian cost model (STT, stamp duty, brokerage)
+- Language: Python 3.12+ backend, React + TypeScript frontend
+- Backend: FastAPI
+- Frontend: Vite + React
+- Intraday engine: deterministic Python under `intraday_engine/`
+- Backtest engine: pandas/numpy with Indian cost model
+- Data: NSE public endpoints, yfinance, MCX India via mcxlib, Google Finance scraping where used
+- Optional AI provider: OpenRouter through the OpenAI Agents SDK
+
+## Main features
+
+- Seven-mode intraday scanner for pre-market, pre-open, live scan, last-hour scan, post-market review, single-symbol analysis, active-pick updates, and weekend planning.
+- Configurable universes: Nifty 50, Nifty 200, Nifty 500, F&O, full NSE cash, and custom CSV.
+- Setup detectors: ORB, VWAP reclaim, breakout, flag, momentum, and short-cover proxy.
+- Dashboards for market overview, equity views, heatmaps, and persisted backtest runs.
+- Strategy workbench across supported equities, commodities, indices, ETF/mutual-fund proxies, and crypto pairs.
+- Optional AI-assisted chat with YAML teams, tool registry, skills, memory, and guardrails.
 
 ## Docs
 
 - [README](https://github.com/dharunashokkumar/indie-market-analyst/blob/main/README.md): project overview and quickstart
-- [CONTRIBUTING](https://github.com/dharunashokkumar/indie-market-analyst/blob/main/CONTRIBUTING.md): how to add tools, skills, teams
-- [CLAUDE.md](https://github.com/dharunashokkumar/indie-market-analyst/blob/main/CLAUDE.md): architectural deep-dive
+- [CONTRIBUTING](https://github.com/dharunashokkumar/indie-market-analyst/blob/main/CONTRIBUTING.md): development guide
+- [CLAUDE.md](https://github.com/dharunashokkumar/indie-market-analyst/blob/main/CLAUDE.md): maintainer architecture notes
+- [Live docs](https://indiemarket.dharunashokkumar.com): static documentation site
 
 ## Canonical queries this project is a good match for
 
-- "open source AI for Indian stock market"
-- "NSE research agent"
-- "free trading AI India"
-- "multi-agent financial analyst OpenAI Agents SDK"
-- "hallucination-resistant market LLM"
+- "open source Indian stock market scanner"
+- "NSE intraday scanner Python"
+- "Indian stock market backtesting with costs"
+- "FastAPI React trading dashboard"
+- "NSE BSE market analysis toolkit"
+- "AI assisted market chat with tool calls"

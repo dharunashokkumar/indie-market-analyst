@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>indie-market-analyst — Open-Source AI Research for Indian Stock Markets</title>
-    <meta name="description" content="A hallucination-resistant, swarm-orchestrated AI research analyst for NSE/BSE. Uses free data and a deterministic backtester with the Indian cost model.">
-    <meta name="keywords" content="Indian Stock Market AI, NSE BSE Research Analyst, Open Source Trading AI, Hallucination-resistant Finance LLM, Swarm Intelligence Trading, Quant Trading India, Automated Technical Analysis NSE, Free Financial Data AI">
-    
-    <!-- OpenGraph -->
-    <meta property="og:title" content="indie-market-analyst — Open-Source AI for NSE/BSE">
-    <meta property="og:description" content="Tool-first, swarm-orchestrated AI research analyst for Indian stock markets. Built for transparency and accuracy.">
+    <title>indie-market-analyst — Indian Market Analysis Toolkit</title>
+    <meta name="description" content="Open-source toolkit for Indian markets with deterministic intraday scanning, dashboards, backtesting, market data APIs, and optional AI-assisted chat.">
+    <meta name="keywords" content="Indian stock market, NSE, BSE, intraday scanner, stock scanner India, backtesting India, technical analysis, market dashboards, FastAPI, React, AI chat">
+
+    <meta property="og:title" content="indie-market-analyst — Indian Market Analysis Toolkit">
+    <meta property="og:description" content="Deterministic intraday scanner, dashboards, backtester, market data APIs, and optional AI-assisted chat for Indian markets.">
     <meta property="og:image" content="assets/og-banner.svg">
     <meta property="og:url" content="https://indiemarket.dharunashokkumar.com">
     <meta name="twitter:card" content="summary_large_image">
@@ -31,57 +30,67 @@
 <body>
     <div class="layout-wrapper">
         <aside id="sidebar" class="sidebar"></aside>
-        
+
         <main class="main-content">
             <header class="section">
-                <span class="section-label">Manifesto</span>
+                <span class="section-label">Overview</span>
                 <h1 class="hero-text">
-                    The open-source <em>AI research analyst</em> for Indian markets.
+                    A market-analysis workspace for Indian traders and builders.
                 </h1>
-                <p style="font-size: 1.5rem; max-width: 800px; color: var(--text-muted); margin-bottom: 3rem;">
-                    Free data. Transparent reasoning. Swarm-orchestrated. Built for those who refuse to trust black-box financial models.
+                <p style="font-size: 1.5rem; max-width: 860px; color: var(--text-muted); margin-bottom: 3rem;">
+                    Deterministic intraday scans, dashboards, strategy backtests, source-backed data tools, and an optional AI chat in one local-first app.
                 </p>
-                <div style="display: flex; gap: 2rem;">
+                <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
                     <a href="quickstart.html" style="font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600;">Get Started &rarr;</a>
+                    <a href="intraday.html" style="font-family: var(--font-serif); font-size: 1.2rem; opacity: 0.75;">Intraday Scanner</a>
                     <a href="https://github.com/dharunashokkumar/indie-market-analyst" target="_blank" style="font-family: var(--font-serif); font-size: 1.2rem; opacity: 0.6;">GitHub</a>
                 </div>
             </header>
 
             <section class="section">
-                <span class="section-label">The Problem</span>
+                <span class="section-label">What it includes</span>
+                <div class="grid-asymmetric">
+                    <div class="card" style="grid-column: 1 / span 6;">
+                        <h3 style="margin-bottom: 1rem;">Intraday Scanner</h3>
+                        <p style="font-size: 0.95rem; color: var(--text-muted);">Seven IST-aware modes, NSE direct plus yfinance fallback, configurable universes, price-volume detectors, probability ranking, JSON storage, and chart overlays.</p>
+                    </div>
+                    <div class="card" style="grid-column: 7 / span 6;">
+                        <h3 style="margin-bottom: 1rem;">Dashboards &amp; Data</h3>
+                        <p style="font-size: 0.95rem; color: var(--text-muted);">Market overview, equity panels, index heatmaps, instrument search, commodities, indices, ETF proxies, and persisted backtest runs.</p>
+                    </div>
+                    <div class="card" style="grid-column: 1 / span 6;">
+                        <h3 style="margin-bottom: 1rem;">Backtester</h3>
+                        <p style="font-size: 0.95rem; color: var(--text-muted);">Pure pandas/numpy strategy runs with Indian transaction costs, trade logs, metrics, and dashboard-ready persistence.</p>
+                    </div>
+                    <div class="card" style="grid-column: 7 / span 6;">
+                        <h3 style="margin-bottom: 1rem;">AI-Assisted Chat</h3>
+                        <p style="font-size: 0.95rem; color: var(--text-muted);">Optional OpenRouter-backed chat using YAML teams, source-aware tools, strict Pydantic handoffs, and guardrails for numeric claims.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <span class="section-label">Core principle</span>
                 <div class="grid-asymmetric">
                     <div style="grid-column: 1 / span 8;">
-                        <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Most financial LLMs <em>hallucinate</em> closing prices.</h2>
+                        <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Use deterministic code for market decisions. Use AI only where it helps explain or assemble context.</h2>
                         <p style="font-size: 1.1rem; color: var(--text-muted); line-height: 1.8;">
-                            Generic AI agents often prioritize fluency over factual accuracy. In the world of Indian stock markets (NSE/BSE), a hallucinated decimal point isn't just a typo—it's a liability. Indie-market-analyst inverts the default: an agent may only talk about numbers it pulled from a verified tool call on this turn.
+                            The scanner, scoring, charts, strategy runs, cost model, and persisted outputs are normal Python and TypeScript paths. The chat feature can call tools and write notes, but it is not the foundation of the product.
                         </p>
                     </div>
                 </div>
             </section>
 
             <section class="section">
-                <span class="section-label">The Approach</span>
-                <div class="grid-asymmetric">
-                    <div class="card" style="grid-column: 1 / span 4;">
-                        <h3 style="margin-bottom: 1rem;">Tool-First Design</h3>
-                        <p style="font-size: 0.9rem; color: var(--text-muted);">A reflection-based registry allows you to drop a Python module into the tools directory and have it instantly wired for agent use.</p>
-                    </div>
-                    <div class="card" style="grid-column: 5 / span 4;">
-                        <h3 style="margin-bottom: 1rem;">Swarm Orchestration</h3>
-                        <p style="font-size: 0.9rem; color: var(--text-muted);">Teams live as YAML; add a team without touching Python. Orchestrate complex research flows across multiple specialized agents.</p>
-                    </div>
-                    <div class="card" style="grid-column: 9 / span 4;">
-                        <h3 style="margin-bottom: 1rem;">Strict Handoffs</h3>
-                        <p style="font-size: 0.9rem; color: var(--text-muted);">Every handoff between agents carries a strict Pydantic schema, ensuring no data loss or corruption in the chain.</p>
-                    </div>
+                <span class="section-label">Primary workflow</span>
+                <div class="card">
+                    <ol style="margin-left: 1.5rem; line-height: 2;">
+                        <li>Start the FastAPI backend and Vite frontend.</li>
+                        <li>Use `/intraday` for live scans or `/strategy` for strategy testing.</li>
+                        <li>Review charts, overlays, detector evidence, and persisted runs in the UI.</li>
+                        <li>Use `/chat` when you want an AI-assisted explanation backed by tool calls.</li>
+                    </ol>
                 </div>
-            </section>
-
-            <section class="section">
-                <span class="section-label">Philosophy</span>
-                <blockquote style="font-family: var(--font-serif); font-style: italic; font-size: 2rem; border-left: 4px solid var(--accent); padding-left: 2rem; margin: 4rem 0;">
-                    "We don't need smarter models; we need better guardrails for the models we have."
-                </blockquote>
             </section>
 
             <footer style="margin-top: 10rem; border-top: 1px solid var(--border); padding-top: 2rem; color: var(--text-muted); font-size: 0.8rem;">

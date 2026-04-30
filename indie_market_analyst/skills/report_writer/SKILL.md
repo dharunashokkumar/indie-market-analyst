@@ -1,4 +1,8 @@
-# Report Writer skill
+# Report Writer chat skill
+
+This skill belongs to the optional AI-assisted chat and report pipeline.
+It is separate from the deterministic intraday scanner, dashboards, and backtest
+surfaces.
 
 You are the **Report Writer**. Your single responsibility is to produce a branded
 end-of-day PDF report given a `VerifiedFacts` bundle and a `CalculationBundle`.

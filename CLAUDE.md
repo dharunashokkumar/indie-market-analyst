@@ -1,90 +1,148 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides maintainer guidance for Claude Code (claude.ai/code) when working in this repository.
 
 ## Project
 
-**INDIE_MARKET_ANALYST** — a tool-first, swarm-orchestrated Indian-market analyst built on the `openai-agents` SDK (PyPI) with OpenRouter as the LLM provider. Free data sources only (yfinance, mcxlib/MCX India, Google Finance scrape, NSE/BSE public endpoints).
+**INDIE_MARKET_ANALYST** is an Indian-market analysis toolkit. It includes a deterministic intraday scanner, market dashboards, strategy and backtest tooling, instrument data APIs, and an optional AI-assisted chat built on the `openai-agents` SDK with OpenRouter.
+
+The old single-feature AI positioning is no longer the whole product. Treat AI chat as one feature. Do not make deterministic market workflows depend on LLM calls.
 
 ## Commands
 
-Python (uv-managed):
+Python:
 
 ```bash
-uv sync                                             # install / resync deps
-uv run pytest                                       # run all tests
-uv run pytest tests/test_swarm_topology.py          # single file
-uv run pytest tests/test_metrics.py::test_drawdown_sign  # single test
-uv run ruff check .                                 # lint
-uv run uvicorn indie_market_analyst.api_server:app --reload    # API (SSE chat)
-uv run indie-analyst chat                           # Rich CLI REPL
-uv run indie-analyst tools                          # list discovered tools
-uv run indie-analyst teams                          # list swarm teams
+uv sync
+uv run pytest
+uv run pytest tests/intraday_engine/
+uv run pytest tests/test_swarm_topology.py
+uv run pytest tests/test_metrics.py::test_drawdown_sign
+uv run ruff check .
+uv run uvicorn indie_market_analyst.api_server:app --reload
+uv run indie-analyst chat
+uv run indie-analyst tools
+uv run indie-analyst teams
 ```
 
-Frontend (Vite/React):
+Frontend:
 
 ```bash
-cd frontend && npm i && npm run dev                 # dev server on :5173 (proxies to API on :8000)
+cd frontend
+npm install
+npm run dev
+npm run build
 ```
 
-`.env` needs `OPENROUTER_API_KEY` (see `.env.example`).
+`.env` needs `OPENROUTER_API_KEY` only for the AI chat feature. Intraday, dashboard, and backtest work can usually be developed without an LLM key.
 
-## Architecture — the parts you can't see from a single file
+## Architecture
 
-The system has **two independent planes**:
+The repo has five important planes:
 
-1. **Cognitive engine** (`indie_market_analyst/`) — everything LLM-facing. Agents, tools, skills, swarm orchestration, memory.
-2. **Deterministic engine** (`backtest/`) — pure pandas/numpy. Agents call into it via tools; it never calls agents.
+1. **API gateway** (`indie_market_analyst/api_server.py`) - FastAPI routes for chat, sessions, runs, strategy, dashboards, market data, and intraday.
+2. **Intraday engine** (`intraday_engine/`) - deterministic scanner workflows, modes, candle sources, filters, detectors, scoring, JSON storage, and `/intraday/*` routes.
+3. **Backtest engine** (`backtest/`) - pandas/numpy loaders, strategies, scans, trades, cost model, metrics, and optimizers.
+4. **AI chat feature** (`indie_market_analyst/agent`, `tools`, `swarm`, `skills`, `guardrails`) - optional OpenRouter-backed chat with typed tools and guarded outputs.
+5. **Frontend** (`frontend/`) - Vite + React app with Chat, Dashboards, Strategy, and Intraday sections.
 
-### Swarm = YAML topology → live `Agent` graph
+### Intraday engine
 
-Teams live as `config/swarm/*.yaml`. Each YAML declares agents (`name`, `role`, `tools`, `skills`, `handoffs`, `output_type`). `swarm/dispatcher.py:build_team` walks the spec, constructs `Agent` objects leaf-first (so parents can reference children), then wires handoffs via `agents.handoff(...)`. **Adding a new team is YAML-only** — no code change.
+`intraday_engine/api/routes.py` mounts under `/intraday`. The major routes are:
 
-The canonical pipeline is `config/swarm/eod_report_pipeline.yaml`:
-`orchestrator → collector → verifier → calculator → report_writer`, each agent constrained to a typed `output_type` from `core/schemas.py` so handoffs carry Pydantic payloads instead of free text.
+- `GET /intraday/mode`
+- `GET/PUT /intraday/settings`
+- `GET /intraday/universes`
+- `POST /intraday/universes/custom-csv`
+- `POST /intraday/scan`
+- `GET /intraday/scan/{scan_id}`
+- `GET /intraday/picks/today`
+- `GET/POST /intraday/picks/active`
+- `GET /intraday/symbol/{symbol}`
+- `GET /intraday/chart/{symbol}`
+- `GET /intraday/premarket/today`
+- `GET /intraday/preopen/today`
+- `GET /intraday/postmarket/today`
+- `GET /intraday/weekend/this`
 
-### Model selection is config-driven
+The live scan flow is:
 
-`providers/registry.py` reads `config/models.yaml` and returns a `LitellmModel` via `providers/openrouter.py`. Role strings in swarm YAML (`role: collector`) map to OpenRouter slugs (`anthropic/claude-sonnet-4`, etc.). Swap a role's model by editing `config/models.yaml` — no code change.
+```text
+request
+  -> ist_clock.mode_context
+  -> universe.builder.build_universe + top movers
+  -> data_sources.router + candle cache
+  -> filters.apply
+  -> detectors.run_all
+  -> scoring.direction/probability/conviction
+  -> storage.picks JSON
+  -> typed ScanResult
+```
 
-### Tool discovery is reflection-based
+Important intraday rules:
 
-`tools/registry.py` walks `indie_market_analyst.tools.*` and harvests any module-level `TOOLS: list[Tool]`. Every tool is a `@function_tool`-decorated callable returning a Pydantic model. Swarm YAML references tools by name; the registry resolves them. **To add a tool:** drop a module under `tools/<category>/`, export `TOOLS = [...]`. No registration step.
+- Keep scanner output deterministic and compact: symbol, direction, probability, conviction, detectors, volume context, price context, source, and freshness.
+- Do not add stop-loss, target, or entry-zone fields unless the user explicitly changes that requirement.
+- Keep intraday persistence as JSON under `data/intraday/`. Do not move it to SQLite.
+- NSE direct is the primary source; yfinance is the fallback. The settings page must keep cookie/source changes runtime-configurable.
+- ASM/GSM should tag picks, not automatically reject them.
+- The detector set currently includes ORB, VWAP reclaim, breakout, flag, momentum, and short-cover proxy.
 
-### Skills are ephemeral prompt fragments
+### Backtest engine
 
-A skill is `skills/<name>/` containing `SKILL.md` + `meta.yaml` (triggers, optional tool allowlist, optional `output_type`, optional `templates/`). `skills/registry.py:discover` loads them; `swarm/dispatcher.py` concatenates `SKILL.md` into an agent's `instructions` when the agent's YAML lists `skills: [<name>]`. The `report_writer` skill is the reference example — it owns the PDF Jinja2 template.
+`backtest/runner.py:run` is the public entry for deterministic runs. Signals are a `pd.Series` in `{-1, 0, 1}` aligned to the loader index. `backtest/engines/equity_engine.py` applies the Indian cost model from `backtest/engines/_market_hooks.py`: STT, stamp duty, exchange transaction charges, SEBI fee, GST, and Zerodha-style brokerage with a 20 INR per-side cap.
 
-### Hallucination control is a 3-layer stack
+Strategies live under `backtest/strategies/` and register through the strategy registry. Metrics live in `backtest/metrics.py`. Runs are persisted through the SQLite-backed store used by dashboard panels.
 
-1. **Structured outputs:** every specialist agent has `output_type=<Pydantic>` — no free text between hops.
-2. **Verifier agent** (in the swarm): cross-checks `CollectorOutput.points` for source/recency/finiteness.
-3. **`guardrails/tool_first.py`** output guardrail: regex-detects numeric claims and trips when no tool was called that turn. The run context's `context["tool_calls"]` list is the signal.
+### AI chat
 
-Always keep these three in mind when adding agents or tools — a new tool that returns numbers should flow through a typed schema and be referenced by downstream agents, not pasted into free-form text.
+The AI feature remains useful but should be treated as optional.
 
-### Runtime loop
+Teams live as `config/swarm/*.yaml`. Each YAML declares agents (`name`, `role`, `tools`, `skills`, `handoffs`, `output_type`). `indie_market_analyst/swarm/dispatcher.py:build_team` constructs `Agent` objects leaf-first and wires handoffs via `agents.handoff(...)`. Adding or changing a team should usually be YAML-only.
 
-`agent/orchestrator.py:run_turn` is the only entry point callers (api_server, cli) use. It:
-1. picks a team via `agent/router.py:pick_team` (keyword rules),
-2. builds the team (`swarm.dispatcher.load_and_build`),
-3. runs `Runner.run_streamed(root_agent, input=text, context={"tool_calls": [...]})`,
-4. normalizes SDK stream events to `StreamEvent(kind, data)` (delta | tool_call | handoff | final | error),
-5. decorates the final markdown with disclaimer + timestamp (`guardrails/disclaimer.py`),
-6. persists user + assistant messages to SQLite via `memory/store.py`.
+Model selection is config-driven. `providers/registry.py` reads `config/models.yaml` and returns a `LitellmModel` via `providers/openrouter.py`. Role strings in swarm YAML map to OpenRouter slugs. Swap a role's model by editing `config/models.yaml`.
+
+Tool discovery is reflection-based. `tools/registry.py` walks `indie_market_analyst.tools.*` and harvests module-level `TOOLS: list[Tool]`. A new tool should be a `@function_tool` callable returning a strict Pydantic model. Tools that return numbers should include source and freshness fields where applicable.
+
+Skills live under `indie_market_analyst/skills/<name>/` with `SKILL.md` and `meta.yaml`. The dispatcher concatenates a skill's `SKILL.md` into agent instructions when YAML lists `skills: [<name>]`.
+
+Hallucination control has three layers:
+
+1. Structured outputs with strict Pydantic schemas between specialist agents.
+2. Verifier agents that check source, recency, and finite numeric values.
+3. `guardrails/tool_first.py`, which rejects unsupported numeric claims when no tool call produced data for the turn.
+
+### Runtime chat loop
+
+`agent/orchestrator.py:run_turn` is the chat entry point used by the API and CLI:
+
+1. `agent/router.py:pick_team` selects a team.
+2. `swarm.dispatcher.load_and_build` builds the agent graph.
+3. `Runner.run_streamed` streams SDK events.
+4. The orchestrator normalizes events to `StreamEvent(kind, data)`.
+5. `guardrails/disclaimer.py` decorates final chat output.
+6. `memory/store.py` persists the user and assistant messages to SQLite.
 
 ### Persistence
 
-Single SQLite file at `sessions/memory.db` (path from `DB_PATH` env). Tables: `sessions`, `messages`, `observations` (long-term memory, tag-indexed), `runs` (backtest/report JSON blobs). `memory/store.py:get_store()` is the singleton. Per-session asyncio locks live in `session/manager.py` to prevent concurrent-turn corruption of the in-memory scratchpad (`memory/short_term.py`).
+- Chat sessions, messages, observations, and run blobs use SQLite at `sessions/memory.db` unless `DB_PATH` overrides it.
+- Intraday settings, candle cache, scans, active picks, reviews, premarket snapshots, and weekend snapshots use JSON under `data/intraday/`.
+- `runs/` and `sessions/` are local audit/persistence paths and should remain gitignored except `.gitkeep`.
 
-### Backtest engine contract
+## Frontend map
 
-`backtest/runner.py:run(symbol, signals, ...)` is the public entry. `signals` is a `pd.Series ∈ {-1,0,1}` aligned to loader index. `engines/equity_engine.py` is vectorized, applies the Indian cost model (`engines/_market_hooks.py`: STT, stamp duty, exchange txn, SEBI fee, GST, Zerodha-style brokerage with ₹20/side cap). `metrics.py` emits Sharpe/Sortino/MaxDD/annualized vol. Loaders self-register via `loaders/registry.register(name, fn)`.
+- `frontend/src/router.tsx` wires the SPA routes.
+- `frontend/src/pages/ChatPage.tsx` is the AI chat.
+- `frontend/src/pages/DashboardsPage.tsx` hosts Market, Equity, Backtests, and Heatmap panels.
+- `frontend/src/pages/StrategyPage.tsx` runs deterministic strategies across supported instrument groups.
+- `frontend/src/pages/Intraday/` contains the seven intraday modes plus settings and shared components.
+- `frontend/src/lib/api.ts` owns backend client functions and shared response types.
 
 ## Conventions worth preserving
 
-- Every Pydantic schema between agents uses `ConfigDict(extra="forbid")` (see `core/schemas.py:_Strict`). Don't loosen this — it forces correct tool outputs.
-- DataPoints carry `source` + `as_of`. Tools must populate both so the Verifier can judge freshness.
-- Frontend routes `/market`, `/options`, `/fno` are **intentionally** placeholder pages. The build-out plan defers them; don't wire real charts there without approval.
-- `agents.Runner.run_streamed` signature differs subtly across SDK versions. If you touch `orchestrator._normalize`, verify event `type` names against the installed `openai-agents` version.
+- Keep deterministic logic out of prompts.
+- Keep Pydantic schemas strict with `ConfigDict(extra="forbid")` for agent handoffs and API models where that is already the pattern.
+- Data points should carry `source` and `as_of` when the UI or verifier needs freshness.
+- Use structured parsers and typed models instead of ad hoc string handling for source data.
+- Do not turn placeholder or planned pages into major features without checking the current scope.
+- When touching `orchestrator._normalize`, verify SDK event `type` names against the installed `openai-agents` version.

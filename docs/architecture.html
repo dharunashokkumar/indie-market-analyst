@@ -21,29 +21,29 @@
 <body>
     <div class="layout-wrapper">
         <aside id="sidebar" class="sidebar"></aside>
-        
+
         <main class="main-content">
             <header class="section">
                 <span class="section-label">System Design</span>
                 <h1 style="font-size: 4rem; margin-bottom: 2rem;">Architecture</h1>
-                <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 800px;">
-                    Indie-market-analyst operates on two distinct planes: a cognitive engine managing agents and a deterministic engine providing precise data processing.
+                <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 840px;">
+                    The app separates deterministic market logic from optional AI chat. Intraday scanning, dashboards, strategy runs, and backtests are normal application paths with typed APIs.
                 </p>
             </header>
 
             <section class="section">
                 <div style="background: var(--accent-soft); padding: 4rem; border: 1px solid var(--border); margin-bottom: 4rem;">
-                    <img src="assets/arch-diagram.svg" alt="Architecture Diagram" style="width: 100%; filter: grayscale(1) contrast(1.2);">
+                    <img src="assets/arch-diagram.svg" alt="Architecture diagram" style="width: 100%; filter: grayscale(1) contrast(1.2);">
                 </div>
             </section>
 
             <section class="section">
                 <span class="section-label">01</span>
-                <h2>The Cognitive Engine</h2>
+                <h2>API Gateway</h2>
                 <div class="grid-asymmetric">
                     <div style="grid-column: 1 / span 8;">
                         <p style="color: var(--text-muted); line-height: 1.8;">
-                            Located in <code>indie_market_analyst/</code>, this layer is responsible for agent orchestration, tool selection, and memory management. It uses the OpenAI Agents SDK to manage swarms of specialized agents (collector, verifier, calculator) that communicate via strict Pydantic schemas.
+                            <code>indie_market_analyst/api_server.py</code> is the FastAPI gateway. It exposes chat streaming, sessions, runs, market data, strategy execution, dashboards, and mounts the <code>/intraday</code> router.
                         </p>
                     </div>
                 </div>
@@ -51,11 +51,35 @@
 
             <section class="section">
                 <span class="section-label">02</span>
-                <h2>The Deterministic Engine</h2>
+                <h2>Deterministic Intraday Engine</h2>
                 <div class="grid-asymmetric">
                     <div style="grid-column: 5 / span 8;">
                         <p style="color: var(--text-muted); line-height: 1.8;">
-                            Located in <code>backtest/</code>, this is pure Python (pandas/numpy). It never calls an LLM. It provides ground-truth calculations for technical indicators, portfolio metrics, and the Indian cost model. Agents call into this engine via tools, but the engine itself remains blissfully unaware of the AI layer.
+                            <code>intraday_engine/</code> owns IST mode detection, NSE/yfinance source routing, universe building, filters, setup detectors, scoring, mode runners, JSON storage, and the typed API models returned to the UI.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <span class="section-label">03</span>
+                <h2>Backtest Engine</h2>
+                <div class="grid-asymmetric">
+                    <div style="grid-column: 1 / span 8;">
+                        <p style="color: var(--text-muted); line-height: 1.8;">
+                            <code>backtest/</code> is pure pandas/numpy. It provides loaders, strategies, scans, trade derivation, optimizers, risk metrics, and the Indian transaction-cost model used by strategy and dashboard surfaces.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <span class="section-label">04</span>
+                <h2>Optional AI Chat</h2>
+                <div class="grid-asymmetric">
+                    <div style="grid-column: 5 / span 8;">
+                        <p style="color: var(--text-muted); line-height: 1.8;">
+                            <code>indie_market_analyst/agent</code>, <code>tools</code>, <code>swarm</code>, <code>skills</code>, and <code>guardrails</code> power the chat feature. YAML teams call source-backed tools and exchange strict Pydantic payloads before producing a final answer or report.
                         </p>
                     </div>
                 </div>
@@ -64,13 +88,18 @@
             <section class="section">
                 <span class="section-label">Data Flow</span>
                 <div class="card">
-                    <ol style="margin-left: 1.5rem; line-height: 2;">
-                        <li>User sends a natural language query via SSE.</li>
-                        <li>Orchestrator identifies the intent and selects a <strong>Swarm Team</strong>.</li>
-                        <li>Agents within the team execute <strong>Tool Calls</strong> against the deterministic engine or public APIs.</li>
-                        <li>Results are verified for source and recency by a dedicated <strong>Verifier Agent</strong>.</li>
-                        <li>A final Pydantic-typed note is synthesized and streamed back to the UI.</li>
-                    </ol>
+                    <pre><code>/intraday scan
+  -> universe + source routing
+  -> filters + detectors
+  -> probability scoring
+  -> JSON storage
+  -> picks table + chart overlays
+
+/chat
+  -> team routing
+  -> tool calls
+  -> verification + guardrails
+  -> streamed markdown + SQLite history</code></pre>
                 </div>
             </section>
 

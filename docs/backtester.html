@@ -21,13 +21,13 @@
 <body>
     <div class="layout-wrapper">
         <aside id="sidebar" class="sidebar"></aside>
-        
+
         <main class="main-content">
             <header class="section">
                 <span class="section-label">Quantitative Analysis</span>
                 <h1 style="font-size: 4rem; margin-bottom: 2rem;">Backtester</h1>
-                <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 800px;">
-                    A pure pandas and numpy engine built to simulate Indian market conditions with surgical precision. No hallucinations, just math.
+                <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 820px;">
+                    A deterministic pandas/numpy engine for strategy runs, trade logs, metrics, and Indian transaction costs. It can be used directly, through APIs, or through dashboard panels.
                 </p>
             </header>
 
@@ -37,16 +37,16 @@
                 <div class="grid-asymmetric">
                     <div style="grid-column: 1 / span 8;">
                         <p style="color: var(--text-muted); line-height: 1.8; margin-bottom: 2rem;">
-                            Most backtesters assume zero friction or use a flat percentage. We model the complex reality of Indian transaction costs, including:
+                            Many backtests assume zero friction or a flat percentage. This engine models the actual Indian cash-equity cost stack:
                         </p>
                         <div class="card">
                             <ul style="list-style: none; line-height: 2;">
-                                <li>&middot; <strong>STT (Securities Transaction Tax)</strong></li>
-                                <li>&middot; <strong>Stamp Duty</strong></li>
-                                <li>&middot; <strong>Exchange Transaction Charges</strong></li>
-                                <li>&middot; <strong>SEBI Turnover Fees</strong></li>
-                                <li>&middot; <strong>GST (18% on brokerage & charges)</strong></li>
-                                <li>&middot; <strong>Zerodha-style flat brokerage</strong></li>
+                                <li>&middot; STT</li>
+                                <li>&middot; Stamp duty</li>
+                                <li>&middot; Exchange transaction charges</li>
+                                <li>&middot; SEBI turnover fees</li>
+                                <li>&middot; GST on brokerage and charges</li>
+                                <li>&middot; Zerodha-style brokerage cap</li>
                             </ul>
                         </div>
                     </div>
@@ -55,18 +55,17 @@
 
             <section class="section">
                 <span class="section-label">02</span>
-                <h2>Performance Metrics</h2>
+                <h2>Strategies &amp; Metrics</h2>
                 <div class="grid-asymmetric">
                     <div style="grid-column: 5 / span 8;">
                         <p style="color: var(--text-muted); line-height: 1.8;">
-                            The engine calculates risk-adjusted returns beyond just CAGR. It provides:
+                            Strategy modules emit deterministic signal series. The runner derives trades, applies costs, stores run blobs, and returns metrics for the UI.
                         </p>
                         <ul style="margin-top: 1rem; margin-left: 1.5rem; line-height: 2;">
-                            <li>Sharpe Ratio & Sortino Ratio</li>
-                            <li>Maximum Drawdown (MDD)</li>
-                            <li>Calmar Ratio</li>
-                            <li>Volatility (Annualized)</li>
-                            <li>Win Rate & Expectancy</li>
+                            <li>Sharpe, Sortino, Calmar, and annualized volatility</li>
+                            <li>Maximum drawdown and equity curve</li>
+                            <li>Win rate, expectancy, trade log, and cost breakdown</li>
+                            <li>Benchmark comparison where data coverage is sufficient</li>
                         </ul>
                     </div>
                 </div>
@@ -75,13 +74,17 @@
             <section class="section">
                 <span class="section-label">Usage</span>
                 <h2>Running a Simulation</h2>
-                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">The backtester can be used as a standalone library or via the agent's tools.</p>
-                <pre><code>from backtest.engines.equity_engine import BacktestEngine
+                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Use the `/strategy` page, dashboard backtest tab, backend API, or Python modules directly.</p>
+                <pre><code>from backtest import runner
 
-engine = BacktestEngine(initial_capital=100000)
-results = engine.run(strategy_signals, price_data)
+result = runner.run(
+    symbol="RELIANCE.NS",
+    strategy="momentum",
+    period="1y",
+    initial_capital=100000,
+)
 
-print(f"Sharpe Ratio: {results.sharpe_ratio}")</code></pre>
+print(result["metrics"]["sharpe"])</code></pre>
             </section>
 
             <footer style="margin-top: 10rem; border-top: 1px solid var(--border); padding-top: 2rem; color: var(--text-muted); font-size: 0.8rem;">

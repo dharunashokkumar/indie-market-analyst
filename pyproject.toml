@@ -1,7 +1,7 @@
 [project]
 name = "indie-market-analyst"
 version = "0.1.0"
-description = "Open-source, tool-first, swarm-orchestrated AI research analyst for Indian markets. Free data, OpenRouter models, deterministic backtester."
+description = "Open-source Indian-market analysis toolkit with intraday scanning, dashboards, backtesting, market data APIs, and optional AI-assisted chat."
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
@@ -13,6 +13,11 @@ keywords = [
     "trading",
     "quant",
     "backtest",
+    "backtesting",
+    "intraday-trading",
+    "stock-scanner",
+    "market-data",
+    "technical-analysis",
     "ai-agents",
     "openai-agents-sdk",
     "llm",

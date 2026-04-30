@@ -21,59 +21,72 @@
 <body>
     <div class="layout-wrapper">
         <aside id="sidebar" class="sidebar"></aside>
-        
+
         <main class="main-content">
             <header class="section">
                 <span class="section-label">Guide</span>
                 <h1 style="font-size: 4rem; margin-bottom: 2rem;">Quickstart</h1>
-                <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 700px;">
-                    Get up and running in minutes. You'll need Python 3.12+ and Node.js installed on your machine.
+                <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 760px;">
+                    Run the local market-analysis app with Python 3.12+, uv, Node.js, and npm. The AI chat key is optional unless you use `/chat`.
                 </p>
             </header>
 
             <section class="section">
                 <span class="section-label">Step 01</span>
-                <h2>Clone & Install</h2>
-                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">We use <a href="https://github.com/astral-sh/uv" target="_blank">uv</a> for lightning-fast Python dependency management.</p>
+                <h2>Clone &amp; Install</h2>
+                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">The backend is managed with <a href="https://github.com/astral-sh/uv" target="_blank">uv</a>.</p>
                 <pre><code>git clone https://github.com/dharunashokkumar/indie-market-analyst.git
 cd indie-market-analyst
 uv sync
 cp .env.example .env</code></pre>
-                <p style="font-style: italic; font-size: 0.9rem; margin-top: 1rem;">Note: Add your <code>OPENROUTER_API_KEY</code> to the <code>.env</code> file.</p>
+                <p style="font-style: italic; font-size: 0.9rem; margin-top: 1rem;">Add <code>OPENROUTER_API_KEY</code> only if you plan to use the AI-assisted chat.</p>
             </section>
 
             <section class="section">
                 <span class="section-label">Step 02</span>
-                <h2>Run the Engine</h2>
-                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Start the FastAPI backend server. It handles the cognitive orchestration.</p>
+                <h2>Run the Backend</h2>
+                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Start the FastAPI gateway for intraday, dashboards, strategy, sessions, runs, market data, and chat.</p>
                 <pre><code>uv run uvicorn indie_market_analyst.api_server:app --reload</code></pre>
             </section>
 
             <section class="section">
                 <span class="section-label">Step 03</span>
                 <h2>Launch the Interface</h2>
-                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">The frontend is a modern React application powered by Vite.</p>
+                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">The frontend is a React app powered by Vite.</p>
                 <pre><code>cd frontend
 npm install
 npm run dev</code></pre>
-                <p style="margin-top: 2rem;">Open <a href="http://localhost:5173" target="_blank">http://localhost:5173</a> in your browser and ask your first question: <em>"What's the setup on JSWSTEEL?"</em></p>
+                <p style="margin-top: 2rem;">Open <a href="http://localhost:5173" target="_blank">http://localhost:5173</a>. Start with <code>/intraday</code>, <code>/dashboards</code>, <code>/strategy</code>, or <code>/chat</code>.</p>
             </section>
 
             <section class="section">
-                <span class="section-label">Alternative</span>
-                <h2>CLI Usage</h2>
-                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Prefer the terminal? Use the built-in CLI for quick inspections.</p>
+                <span class="section-label">Common paths</span>
+                <div class="grid-asymmetric">
+                    <div class="card" style="grid-column: 1 / span 6;">
+                        <h3 style="margin-bottom: 1rem;">Intraday</h3>
+                        <p style="color: var(--text-muted);">Open <code>/intraday</code>, choose a universe and source, then run a scan. Use <code>/intraday/settings</code> for NSE cookies and source defaults.</p>
+                    </div>
+                    <div class="card" style="grid-column: 7 / span 6;">
+                        <h3 style="margin-bottom: 1rem;">Strategy &amp; Backtests</h3>
+                        <p style="color: var(--text-muted);">Open <code>/strategy</code> to run deterministic strategies. Review persisted results in <code>/dashboards?tab=backtests</code>.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <span class="section-label">CLI</span>
+                <h2>Optional Chat Utilities</h2>
+                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">The CLI is mainly useful for the AI chat feature and tool inspection.</p>
                 <pre><code>uv run indie-analyst chat
-uv run indie-analyst tools    # list discovered tools
-uv run indie-analyst teams    # list swarm teams</code></pre>
+uv run indie-analyst tools
+uv run indie-analyst teams</code></pre>
             </section>
 
             <section class="section">
                 <span class="section-label">Docs</span>
                 <h2>Preview the Static Docs Locally</h2>
-                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Want to review the landing site before publishing? Serve the <code>docs/</code> directory locally.</p>
-                <pre><code>cd ..
-python3 -m http.server 4173 -d docs</code></pre>
+                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Serve the <code>docs/</code> directory locally before publishing.</p>
+                <pre><code>python3 -m http.server 4173 -d docs</code></pre>
                 <p style="margin-top: 2rem;">Then open <a href="http://localhost:4173" target="_blank">http://localhost:4173</a>.</p>
             </section>
 

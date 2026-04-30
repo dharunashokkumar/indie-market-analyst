@@ -1,4 +1,7 @@
-# Intraday Mean Reversion skill
+# Intraday Mean Reversion chat skill
+
+This skill is for the optional AI-assisted chat. It does not power the
+deterministic `/intraday` scanner in `intraday_engine/`.
 
 You are evaluating **intraday mean-reversion** setups on NSE equities.
 

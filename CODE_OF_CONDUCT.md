@@ -1,4 +1,6 @@
-# Contributor Covenant Code of Conduct
+# indie-market-analyst Code of Conduct
+
+This code of conduct applies to project discussions, issues, pull requests, and community spaces for indie-market-analyst.
 
 ## Our Pledge
 

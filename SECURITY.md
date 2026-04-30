@@ -14,6 +14,9 @@ You should receive an acknowledgement within 72 hours. Once a fix is prepared, t
 
 ## Scope
 
-This project is research tooling. It ships with no authentication and is intended for local or trusted single-user use. Deployments beyond that are the operator's responsibility.
+This project is local-first market-analysis tooling. It ships with no authentication and is intended for trusted single-user use unless the operator adds deployment controls. Public or shared deployments are the operator's responsibility.
 
-Credentials (e.g. `OPENROUTER_API_KEY`) must be kept out of the repository. `.env` is gitignored; only `.env.example` is tracked.
+Credentials and private runtime settings, including `OPENROUTER_API_KEY` and NSE cookies, must be kept out of the repository. `.env` is gitignored; only `.env.example` is tracked.
+
+
+

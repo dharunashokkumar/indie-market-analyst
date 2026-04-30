@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Navigation Definition
     const navItems = [
-        { label: 'The Vision', path: 'index.html' },
+        { label: 'Overview', path: 'index.html' },
         { label: 'Quickstart', path: 'quickstart.html' },
         { label: 'Architecture', path: 'architecture.html' },
-        { label: 'Swarm & Tools', path: 'swarm-and-tools.html' },
-        { label: 'Backtester', path: 'backtester.html' }
+        { label: 'Intraday Scanner', path: 'intraday.html' },
+        { label: 'Dashboards & Data', path: 'dashboards.html' },
+        { label: 'Backtester', path: 'backtester.html' },
+        { label: 'AI Chat & Tools', path: 'swarm-and-tools.html' }
     ];
 
     const currentPath = window.location.pathname.split('/').pop() || 'index.html';
 
-    // Inject Sidebar Content
     const sidebar = document.querySelector('#sidebar');
     if (sidebar) {
         const navHtml = `
@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sidebar.innerHTML = navHtml;
     }
 
-    // Theme Toggle Logic
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
@@ -55,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Copy Code Buttons
     document.querySelectorAll('pre').forEach(block => {
         const button = document.createElement('button');
         button.className = 'copy-btn';
@@ -71,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Intersection Observer for scroll animations
     const observerOptions = {
         threshold: 0.1
     };
